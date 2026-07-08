@@ -1,0 +1,255 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: Arial, Helvetica, sans-serif;
+    --font-playfair: Georgia, 'Times New Roman', serif;
+
+    /* Apple Valley - Light Theme */
+    --background: 40 30% 98%;
+    --foreground: 150 25% 15%;
+    --card: 40 30% 99%;
+    --card-foreground: 150 25% 15%;
+    --popover: 40 30% 99%;
+    --popover-foreground: 150 25% 15%;
+
+    /* Primary: Forest Green */
+    --primary: 142 35% 39%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Mist Grey */
+    --secondary: 200 15% 94%;
+    --secondary-foreground: 150 25% 20%;
+
+    /* Muted: Stone Grey */
+    --muted: 30 10% 92%;
+    --muted-foreground: 30 5% 45%;
+
+    /* Accent: Walnut Brown */
+    --accent: 25 55% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Lake Blue for highlights */
+    --highlight: 210 25% 50%;
+
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Success & Warning */
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    /* Borders & Inputs */
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 142 35% 39%;
+
+    /* Chart colors */
+    --chart-1: 142 35% 39%;
+    --chart-2: 210 25% 50%;
+    --chart-3: 25 55% 50%;
+    --chart-4: 30 10% 45%;
+    --chart-5: 200 15% 60%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    /* Apple Valley - Dark Theme */
+    --background: 150 25% 8%;
+    --foreground: 40 20% 95%;
+    --card: 150 20% 12%;
+    --card-foreground: 40 20% 95%;
+    --popover: 150 20% 10%;
+    --popover-foreground: 40 20% 95%;
+
+    /* Primary: Forest Green */
+    --primary: 142 35% 50%;
+    --primary-foreground: 150 25% 8%;
+
+    /* Secondary: Dark Mist */
+    --secondary: 150 15% 18%;
+    --secondary-foreground: 40 20% 90%;
+
+    /* Muted: Dark Stone */
+    --muted: 150 10% 22%;
+    --muted-foreground: 40 15% 65%;
+
+    /* Accent: Walnut Brown */
+    --accent: 25 55% 55%;
+    --accent-foreground: 150 25% 8%;
+
+    /* Destructive */
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Success & Warning */
+    --success: 142 60% 40%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 80% 45%;
+    --warning-foreground: 0 0% 100%;
+
+    /* Borders & Inputs */
+    --border: 150 15% 20%;
+    --input: 150 15% 20%;
+    --ring: 142 35% 50%;
+
+    /* Chart colors */
+    --chart-1: 142 35% 50%;
+    --chart-2: 210 30% 55%;
+    --chart-3: 25 55% 55%;
+    --chart-4: 30 20% 55%;
+    --chart-5: 200 20% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-medium tracking-tight;
+  }
+}
+
+@layer components {
+  /* Mist Glass Effect */
+  .mist-glass {
+    @apply bg-white/70 dark:bg-forest-950/70 backdrop-blur-lg;
+  }
+
+  /* Forest Gradient Text */
+  .forest-text {
+    @apply bg-gradient-to-r from-forest-600 to-lake-600 bg-clip-text text-transparent;
+  }
+
+  /* Premium Card */
+  .premium-card {
+    @apply bg-card/80 backdrop-blur-sm rounded-2xl border border-border/50 shadow-lg;
+  }
+
+  /* Scenic Image Overlay */
+  .scenic-overlay {
+    @apply relative before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/60 before:via-black/20 before:to-transparent before:z-10;
+  }
+
+  /* Booking Panel */
+  .booking-panel {
+    @apply bg-stone-50/95 dark:bg-forest-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-forest-200 dark:border-mist-700;
+  }
+
+  /* Status Badges */
+  .badge-confirmed {
+    @apply bg-forest-100 text-forest-700 dark:bg-forest-900/50 dark:text-forest-300;
+  }
+
+  .badge-pending {
+    @apply bg-walnut-100 text-walnut-700 dark:bg-walnut-900/50 dark:text-walnut-300;
+  }
+
+  .badge-checked-in {
+    @apply bg-lake-100 text-lake-700 dark:bg-lake-900/50 dark:text-lake-300;
+  }
+
+  .badge-checked-out {
+    @apply bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300;
+  }
+
+  .badge-cancelled {
+    @apply bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300;
+  }
+
+  /* Section Container */
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Page Transition */
+  .page-enter {
+    @apply animate-fade-in;
+  }
+}
+
+@layer utilities {
+  /* Smooth transitions */
+  .transition-normal {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  /* Hide scrollbar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Text balance */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Aspect ratios for scenic images */
+  .aspect-scenic {
+    aspect-ratio: 16/9;
+  }
+
+  .aspect-portrait {
+    aspect-ratio: 3/4;
+  }
+
+  /* Line clamp */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Custom Selection Color */
+::selection {
+  @apply bg-forest-500/30 text-foreground;
+}
+
+/* Scrollbar Styling for Dark Mode */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground));
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--foreground));
+}

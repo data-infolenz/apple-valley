@@ -1,0 +1,37 @@
+[
+  {
+    "_id": "6a4cca178c085299db7d169f",
+    "bookingId": "AV-MRAGNJO4-8UEM",
+    "guestSnapshot": {
+      "name": "Data Infolenz Technolgies Pvt Ltd",
+      "email": "datainfolenz@gmail.com",
+      "phone": "12233266",
+      "address": "52320"
+    },
+    "rooms": [
+      {
+        "roomTypeId": "660000000000000000000001",
+        "roomTypeName": "Budget Standard Room",
+        "pricePerNight": 2000
+      }
+    ],
+    "checkIn": "2026-07-09T00:00:00.000Z",
+    "checkOut": "2026-07-19T00:00:00.000Z",
+    "adults": 2,
+    "children": 1,
+    "nights": 10,
+    "addOns": [],
+    "baseAmount": 20000,
+    "addOnAmount": 0,
+    "taxAmount": 2400,
+    "discountAmount": 0,
+    "totalAmount": 22400,
+    "paymentStatus": "pending",
+    "bookingStatus": "pending",
+    "source": "website",
+    "specialRequests": "",
+    "couponCode": "",
+    "createdAt": "2026-07-07T09:42:47.374Z",
+    "updatedAt": "2026-07-07T09:42:47.374Z"
+  }
+]
