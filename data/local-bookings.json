@@ -1,5 +1,150 @@
 [
   {
+    "_id": "19f7f16718db145caa21bc80",
+    "bookingId": "AV-MRT36QA5-YRYE",
+    "guestSnapshot": {
+      "name": "Akram",
+      "email": "jibrilnigmath@gmail.com",
+      "phone": "9361979918",
+      "address": ""
+    },
+    "rooms": [
+      {
+        "roomTypeId": "660000000000000000000002",
+        "roomTypeName": "Deluxe Hill View Room",
+        "pricePerNight": 3500
+      }
+    ],
+    "checkIn": "2026-07-21T00:00:00.000Z",
+    "checkOut": "2026-07-22T00:00:00.000Z",
+    "adults": 2,
+    "children": 0,
+    "nights": 1,
+    "addOns": [
+      {
+        "name": "Room Heater",
+        "price": 300,
+        "quantity": 1,
+        "unit": "per_night"
+      },
+      {
+        "name": "Extra Blanket",
+        "price": 150,
+        "quantity": 1,
+        "unit": "per_night"
+      },
+      {
+        "name": "Extra Bed",
+        "price": 500,
+        "quantity": 1,
+        "unit": "per_night"
+      },
+      {
+        "name": "Candle Light Dinner",
+        "price": 1500,
+        "quantity": 1,
+        "unit": "per_booking"
+      },
+      {
+        "name": "BBQ Dinner",
+        "price": 1200,
+        "quantity": 1,
+        "unit": "per_booking"
+      },
+      {
+        "name": "Campfire Evening",
+        "price": 500,
+        "quantity": 1,
+        "unit": "per_booking"
+      },
+      {
+        "name": "Birthday Cake",
+        "price": 800,
+        "quantity": 1,
+        "unit": "per_booking"
+      }
+    ],
+    "baseAmount": 3500,
+    "addOnAmount": 4950,
+    "taxAmount": 1014,
+    "discountAmount": 0,
+    "totalAmount": 9464,
+    "paymentStatus": "pending",
+    "bookingStatus": "pending",
+    "source": "website",
+    "specialRequests": "",
+    "couponCode": "",
+    "createdAt": "2026-07-20T10:33:25.133Z",
+    "updatedAt": "2026-07-20T10:33:25.133Z"
+  },
+  {
+    "_id": "19f7f123661b1f11352e5090",
+    "bookingId": "AV-MRT30SBL-0RNY",
+    "guestSnapshot": {
+      "name": "Akram",
+      "email": "jibrilnigmath@gmail.com",
+      "phone": "9361979918",
+      "address": ""
+    },
+    "rooms": [
+      {
+        "roomTypeId": "660000000000000000000002",
+        "roomTypeName": "Deluxe Hill View Room",
+        "pricePerNight": 3500
+      }
+    ],
+    "checkIn": "2026-07-21T00:00:00.000Z",
+    "checkOut": "2026-07-22T00:00:00.000Z",
+    "adults": 2,
+    "children": 0,
+    "nights": 1,
+    "addOns": [
+      {
+        "name": "Campfire Evening",
+        "price": 500,
+        "quantity": 1,
+        "unit": "per_booking"
+      },
+      {
+        "name": "Birthday Cake",
+        "price": 800,
+        "quantity": 1,
+        "unit": "per_booking"
+      },
+      {
+        "name": "Candle Light Dinner",
+        "price": 1500,
+        "quantity": 1,
+        "unit": "per_booking"
+      },
+      {
+        "name": "Extra Blanket",
+        "price": 150,
+        "quantity": 1,
+        "unit": "per_night"
+      },
+      {
+        "name": "Room Heater",
+        "price": 300,
+        "quantity": 1,
+        "unit": "per_night"
+      }
+    ],
+    "baseAmount": 3500,
+    "addOnAmount": 3250,
+    "taxAmount": 810,
+    "discountAmount": 0,
+    "totalAmount": 7560,
+    "paymentStatus": "pending",
+    "bookingStatus": "confirmed",
+    "source": "website",
+    "specialRequests": "",
+    "couponCode": "",
+    "createdAt": "2026-07-20T10:28:47.841Z",
+    "updatedAt": "2026-07-20T10:32:25.346Z",
+    "confirmedAt": "2026-07-20T10:32:25.345Z"
+  },
+  {
     "_id": "6a4cca178c085299db7d169f",
     "bookingId": "AV-MRAGNJO4-8UEM",
     "guestSnapshot": {
@@ -27,11 +172,12 @@
     "discountAmount": 0,
     "totalAmount": 22400,
     "paymentStatus": "pending",
-    "bookingStatus": "pending",
+    "bookingStatus": "confirmed",
     "source": "website",
     "specialRequests": "",
     "couponCode": "",
     "createdAt": "2026-07-07T09:42:47.374Z",
-    "updatedAt": "2026-07-07T09:42:47.374Z"
+    "updatedAt": "2026-07-20T10:32:03.657Z",
+    "confirmedAt": "2026-07-20T10:32:03.646Z"
   }
 ]

@@ -1,5 +1,3 @@
-import { Types } from 'mongoose';
-
 // All types for the KodaiMist Retreat application
 
 export type UserRole = 'admin' | 'manager' | 'receptionist' | 'housekeeping' | 'staff';

@@ -9,11 +9,9 @@ import {
   BedDouble,
   Package,
   MapPin,
-  Users,
   CreditCard,
   Tag,
   Settings,
-  MessageSquare,
   Star,
   ShieldCheck,
   Clock,
@@ -63,7 +61,6 @@ const sidebarItems = [
     ],
   },
   { name: 'Attractions', href: '/admin/attractions', icon: MapPin },
-  { name: 'Guests', href: '/admin/guests', icon: Users },
   {
     name: 'Operations',
     icon: Settings,
@@ -76,7 +73,6 @@ const sidebarItems = [
   { name: 'Payments', href: '/admin/payments', icon: CreditCard },
   { name: 'Coupons', href: '/admin/coupons', icon: Tag },
   { name: 'Reviews', href: '/admin/reviews', icon: Star },
-  { name: 'WhatsApp', href: '/admin/whatsapp', icon: MessageSquare },
   { name: 'ID Verification', href: '/admin/verification', icon: ShieldCheck },
   { name: 'Reports', href: '/admin/reports', icon: Clock },
 ];
@@ -103,14 +99,18 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const logout = useAuthStore((state) => state.logout);
   const [mounted, setMounted] = useState(false);
   const [latestBookings, setLatestBookings] = useState<NotificationBooking[]>([]);
+  const isLoginPage = pathname === '/admin/login';
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
+    if (isLoginPage) return;
+
     const loadLatestBookings = async () => {
       try {
         const response = await fetch('/api/bookings?limit=5&status=all', {
@@ -129,7 +129,7 @@ export default function AdminLayout({
     loadLatestBookings();
     const interval = window.setInterval(loadLatestBookings, 10000);
     return () => window.clearInterval(interval);
-  }, []);
+  }, [isLoginPage]);
 
   const toggleExpand = (name: string) => {
     setExpandedItems(prev =>
@@ -139,8 +139,24 @@ export default function AdminLayout({
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/admin/login');
+    logout();
+    setMobileSidebarOpen(false);
+    router.replace('/');
+    router.refresh();
   };
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      handleLogout();
+    }, 30 * 60 * 1000);
+
+    return () => window.clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="min-h-screen bg-stone-100 dark:bg-forest-950">
@@ -327,7 +343,7 @@ export default function AdminLayout({
             <div className="relative hidden sm:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-forest-400" />
               <Input
-                placeholder="Search bookings, guests..."
+                placeholder="Search bookings..."
                 className="pl-9 w-64 bg-forest-50 dark:bg-forest-800 border-0"
               />
             </div>

@@ -47,11 +47,21 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-forest-700 via-forest-800 to-forest-900 flex items-center justify-center p-4">
+    <div className="relative min-h-screen overflow-hidden bg-forest-900 flex items-center justify-center p-4">
+      <video
+        className="absolute inset-0 h-full w-full object-cover"
+        src="/videos/Foggy_Mountain_Foogy.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        aria-hidden="true"
+      />
+      <div className="absolute inset-0 bg-forest-950/55" />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        className="relative z-10 w-full max-w-md"
       >
         {/* Logo */}
         <div className="text-center mb-8">
@@ -66,12 +76,12 @@ export default function AdminLoginPage() {
           <p className="text-mist-300 text-sm">Admin Dashboard</p>
         </div>
 
-        <Card className="backdrop-blur-lg bg-white/95 dark:bg-forest-900/95">
+        <Card className="border-white/10 bg-forest-950/80 text-white backdrop-blur-lg shadow-2xl">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-2xl font-heading font-bold text-center text-forest-800 dark:text-white">
+            <CardTitle className="text-2xl font-heading font-bold text-center text-white">
               Welcome Back
             </CardTitle>
-            <CardDescription className="text-center text-forest-600 dark:text-mist-400">
+            <CardDescription className="text-center text-mist-300">
               Sign in to access the admin dashboard
             </CardDescription>
           </CardHeader>
@@ -85,7 +95,7 @@ export default function AdminLoginPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-forest-700 dark:text-mist-300">
+                <Label htmlFor="email" className="text-mist-200">
                   Email Address
                 </Label>
                 <div className="relative">
@@ -104,7 +114,7 @@ export default function AdminLoginPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-forest-700 dark:text-mist-300">
+                <Label htmlFor="password" className="text-mist-200">
                   Password
                 </Label>
                 <div className="relative">
@@ -158,14 +168,6 @@ export default function AdminLoginPage() {
               </Button>
             </form>
 
-            <div className="mt-6 pt-6 border-t border-forest-100 dark:border-forest-800">
-              <p className="text-center text-sm text-forest-500 dark:text-mist-400">
-                Demo credentials: <br />
-                <span className="font-mono text-forest-700 dark:text-mist-300">
-                  admin@applevalley.com / admin123
-                </span>
-              </p>
-            </div>
           </CardContent>
         </Card>
 

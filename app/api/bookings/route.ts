@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/mongodb';
-import Booking from '@/models/Booking';
-import Guest from '@/models/Guest';
-import RoomType from '@/models/RoomType';
-import Package from '@/models/Package';
-import { getAuthUser } from '@/lib/auth';
-import { generateBookingId } from '@/lib/auth';
-import { queryLocalBookings, saveLocalBooking, updateLocalBooking } from '@/lib/local-booking-store';
-import mongoose from 'mongoose';
+import { getAuthUser, generateBookingId, isAdminRole } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { buildWhatsAppConfirmationUrl, getRoomAvailability } from '@/lib/booking-utils';
+import { decodeJsonField, encodeJsonField } from '@/lib/json-fields';
+import { mkdir, writeFile } from 'fs/promises';
+import path from 'path';
 
 type BookingAddOnInput = {
   name?: string;
@@ -23,53 +20,6 @@ type NormalizedBookingAddOn = {
   unit: 'per_booking' | 'per_night' | 'per_room';
 };
 
-const fallbackRoomTypes = {
-  'budget-standard': {
-    _id: new mongoose.Types.ObjectId('660000000000000000000001'),
-    name: 'Budget Standard Room',
-    basePrice: 2000,
-    isActive: true,
-  },
-  'deluxe-hill-view': {
-    _id: new mongoose.Types.ObjectId('660000000000000000000002'),
-    name: 'Deluxe Hill View Room',
-    basePrice: 3500,
-    isActive: true,
-  },
-  'premium-balcony': {
-    _id: new mongoose.Types.ObjectId('660000000000000000000003'),
-    name: 'Premium Balcony Room',
-    basePrice: 4500,
-    isActive: true,
-  },
-  'family-cottage': {
-    _id: new mongoose.Types.ObjectId('660000000000000000000004'),
-    name: 'Family Cottage',
-    basePrice: 6000,
-    isActive: true,
-  },
-  'honeymoon-suite': {
-    _id: new mongoose.Types.ObjectId('660000000000000000000005'),
-    name: 'Honeymoon Suite',
-    basePrice: 7500,
-    isActive: true,
-  },
-} as const;
-
-type FallbackRoomSlug = keyof typeof fallbackRoomTypes;
-
-function isDatabaseUnavailable(error: unknown) {
-  if (!(error instanceof Error)) return false;
-  return [
-    'ECONNREFUSED',
-    'ServerSelection',
-    'MongoNetwork',
-    'MONGODB_URI',
-    'bufferCommands',
-    'querySrv',
-  ].some((message) => error.message.includes(message));
-}
-
 function parseBookingQuery(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   return {
@@ -81,7 +31,126 @@ function parseBookingQuery(request: NextRequest) {
   };
 }
 
-async function createLocalBookingFromBody(body: Record<string, any>) {
+function serializeBooking(booking: {
+  id: number;
+  bookingId: string;
+  guestSnapshot: unknown;
+  rooms: unknown;
+  checkIn: Date;
+  checkOut: Date;
+  adults: number;
+  children: number;
+  nights: number;
+  packageId: string | null;
+  addOns: unknown;
+  baseAmount: number;
+  addOnAmount: number;
+  taxAmount: number;
+  discountAmount: number;
+  totalAmount: number;
+  paymentStatus: string;
+  bookingStatus: string;
+  source: string;
+  specialRequests: string | null;
+  couponCode: string | null;
+  confirmedAt: Date | null;
+  checkedInAt: Date | null;
+  checkedOutAt: Date | null;
+  cancelledAt: Date | null;
+  cancellationReason: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  documentUrl?: string | null;
+  documentName?: string | null;
+  documentType?: string | null;
+  orders?: Array<{
+    id: number;
+    item: string;
+    quantity: number;
+    price: number;
+    total: number;
+    status: string;
+    orderedAt: Date;
+  }>;
+}) {
+  const guestSnapshot = decodeJsonField(booking.guestSnapshot, {});
+  const rooms = decodeJsonField(booking.rooms, []);
+  const addOns = decodeJsonField(booking.addOns, []);
+
+  return {
+    _id: booking.id.toString(),
+    bookingId: booking.bookingId,
+    guestSnapshot,
+    rooms,
+    checkIn: booking.checkIn.toISOString(),
+    checkOut: booking.checkOut.toISOString(),
+    adults: booking.adults,
+    children: booking.children,
+    nights: booking.nights,
+    packageId: booking.packageId,
+    addOns,
+    baseAmount: booking.baseAmount,
+    addOnAmount: booking.addOnAmount,
+    taxAmount: booking.taxAmount,
+    discountAmount: booking.discountAmount,
+    totalAmount: booking.totalAmount,
+    paymentStatus: booking.paymentStatus,
+    bookingStatus: booking.bookingStatus,
+    source: booking.source,
+    specialRequests: booking.specialRequests,
+    couponCode: booking.couponCode,
+    confirmedAt: booking.confirmedAt?.toISOString(),
+    checkedInAt: booking.checkedInAt?.toISOString(),
+    checkedOutAt: booking.checkedOutAt?.toISOString(),
+    cancelledAt: booking.cancelledAt?.toISOString(),
+    cancellationReason: booking.cancellationReason,
+    documentUrl: booking.documentUrl,
+    documentName: booking.documentName,
+    documentType: booking.documentType,
+    orders: booking.orders?.map((order) => ({
+      id: order.id,
+      item: order.item,
+      quantity: order.quantity,
+      price: order.price,
+      total: order.total,
+      status: order.status,
+      orderedAt: order.orderedAt.toISOString(),
+    })) || [],
+    createdAt: booking.createdAt.toISOString(),
+    updatedAt: booking.updatedAt.toISOString(),
+  };
+}
+
+type SerializedBookingInput = Parameters<typeof serializeBooking>[0];
+
+async function saveBookingDocument(file: File | null) {
+  if (!file || file.size === 0) return {};
+
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+  const maxSize = 5 * 1024 * 1024;
+
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error('Only JPG, PNG, WEBP, or PDF documents are allowed');
+  }
+
+  if (file.size > maxSize) {
+    throw new Error('Document must be 5MB or smaller');
+  }
+
+  const extension = file.name.split('.').pop()?.replace(/[^a-zA-Z0-9]/g, '') || 'bin';
+  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${extension}`;
+  const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'bookings');
+  await mkdir(uploadDir, { recursive: true });
+  await writeFile(path.join(uploadDir, fileName), new Uint8Array(await file.arrayBuffer()));
+
+  return {
+    documentUrl: `/uploads/bookings/${fileName}`,
+    documentName: file.name,
+    documentType: file.type,
+  };
+}
+
+async function createLocalBookingFromBody(body: Record<string, any>, file: File | null = null) {
   const {
     guest,
     rooms,
@@ -94,6 +163,7 @@ async function createLocalBookingFromBody(body: Record<string, any>) {
     source = 'website',
     couponCode,
     packageId,
+    packageSlug,
   } = body;
 
   const checkInDate = new Date(checkIn);
@@ -101,26 +171,46 @@ async function createLocalBookingFromBody(body: Record<string, any>) {
   const nights = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24));
 
   let baseAmount = 0;
-  const roomSnapshots = rooms.map((roomItem: Record<string, any>) => {
-    const roomTypeIdOrSlug = roomItem.roomTypeId || roomItem.roomType || roomItem.slug;
-    const fallbackRoomType = typeof roomTypeIdOrSlug === 'string'
-      ? fallbackRoomTypes[roomTypeIdOrSlug as FallbackRoomSlug]
-      : undefined;
+  const availability = await getRoomAvailability(checkInDate, checkOutDate);
+  const requestedByType: Record<string, number> = {};
+  rooms.forEach((roomItem: Record<string, any>) => {
+    const key = String(roomItem.roomType || roomItem.roomTypeId || roomItem.slug || '');
+    requestedByType[key] = (requestedByType[key] || 0) + 1;
+  });
 
-    if (!fallbackRoomType?.isActive) {
+  for (const [roomTypeKey, requestedCount] of Object.entries(requestedByType)) {
+    const availabilityItem = availability.find((item) => item.slug === roomTypeKey || item.roomTypeId === roomTypeKey);
+    if (availabilityItem && requestedCount > availabilityItem.availableRooms) {
+      throw new Error(`${availabilityItem.name} has only ${availabilityItem.availableRooms} rooms available for the selected dates`);
+    }
+  }
+
+  const roomSnapshots = await Promise.all(rooms.map(async (roomItem: Record<string, any>) => {
+    const roomTypeIdOrSlug = roomItem.roomTypeId || roomItem.roomType || roomItem.slug;
+    const roomType = await prisma.roomType.findFirst({
+      where: {
+        isActive: true,
+        OR: [
+          { slug: String(roomTypeIdOrSlug || '') },
+          ...(Number.isInteger(Number(roomTypeIdOrSlug)) ? [{ id: Number(roomTypeIdOrSlug) }] : []),
+        ],
+      },
+    });
+
+    if (!roomType) {
       throw new Error('Selected room type is not available');
     }
 
-    baseAmount += fallbackRoomType.basePrice * nights;
+    baseAmount += roomType.basePrice * nights;
 
     return {
-      roomTypeId: fallbackRoomType._id.toString(),
-      roomTypeName: fallbackRoomType.name,
+      roomTypeId: roomType.slug,
+      roomTypeName: roomType.name,
       roomId: roomItem.roomId,
       roomNumber: roomItem.roomNumber,
-      pricePerNight: fallbackRoomType.basePrice,
+      pricePerNight: roomType.basePrice,
     };
-  });
+  }));
 
   const normalizedAddOns: NormalizedBookingAddOn[] = (addOns || []).map((item: BookingAddOnInput) => ({
     name: item.name || 'Add-on',
@@ -136,37 +226,44 @@ async function createLocalBookingFromBody(body: Record<string, any>) {
 
   const taxAmount = Math.round((baseAmount + addOnAmount) * 0.12);
   const now = new Date().toISOString();
-
-  return saveLocalBooking({
-    _id: new mongoose.Types.ObjectId().toString(),
-    bookingId: generateBookingId(),
-    guestSnapshot: {
-      name: guest.name,
-      email: guest.email,
-      phone: guest.phone,
-      address: guest.address,
+  const documentData = await saveBookingDocument(file);
+  const booking = await prisma.booking.create({
+    data: {
+      bookingId: generateBookingId(),
+      guestSnapshot: encodeJsonField({
+        name: guest.name,
+        email: guest.email,
+        phone: guest.phone,
+        address: guest.address,
+        city: guest.city,
+        district: guest.district,
+        state: guest.state,
+        pincode: guest.pincode,
+      }),
+      rooms: encodeJsonField(roomSnapshots),
+      checkIn: checkInDate,
+      checkOut: checkOutDate,
+      adults: adults || 1,
+      children: children || 0,
+      nights,
+      packageId: packageId || packageSlug,
+      addOns: encodeJsonField(normalizedAddOns),
+      baseAmount,
+      addOnAmount,
+      taxAmount,
+      discountAmount: 0,
+      totalAmount: baseAmount + addOnAmount + taxAmount,
+      paymentStatus: 'pending',
+      bookingStatus: 'pending',
+      source,
+      ...documentData,
+      specialRequests,
+      couponCode,
+      createdAt: new Date(now),
     },
-    rooms: roomSnapshots,
-    checkIn: checkInDate.toISOString(),
-    checkOut: checkOutDate.toISOString(),
-    adults: adults || 1,
-    children: children || 0,
-    nights,
-    packageId,
-    addOns: normalizedAddOns,
-    baseAmount,
-    addOnAmount,
-    taxAmount,
-    discountAmount: 0,
-    totalAmount: baseAmount + addOnAmount + taxAmount,
-    paymentStatus: 'pending',
-    bookingStatus: 'pending',
-    source,
-    specialRequests,
-    couponCode,
-    createdAt: now,
-    updatedAt: now,
   });
+
+  return serializeBooking(booking);
 }
 
 export async function GET(request: NextRequest) {
@@ -177,68 +274,55 @@ export async function GET(request: NextRequest) {
     }
 
     const { status, date, search, page, limit } = parseBookingQuery(request);
-
-    const query: Record<string, unknown> = {};
+    const where: Record<string, any> = {};
 
     if (status && status !== 'all') {
-      query.bookingStatus = status;
+      where.bookingStatus = status;
     }
-
-    const filters: Record<string, unknown>[] = [];
 
     if (date) {
-      const dayStart = new Date(date);
-      dayStart.setHours(0, 0, 0, 0);
-      const dayEnd = new Date(date);
-      dayEnd.setHours(23, 59, 59, 999);
-
-      filters.push({ $or: [
-        { checkIn: { $gte: dayStart, $lte: dayEnd } },
-        { checkOut: { $gte: dayStart, $lte: dayEnd } },
-      ] });
+      const targetStart = new Date(date);
+      targetStart.setHours(0, 0, 0, 0);
+      const targetEnd = new Date(targetStart);
+      targetEnd.setHours(23, 59, 59, 999);
+      where.OR = [
+        { checkIn: { gte: targetStart, lte: targetEnd } },
+        { checkOut: { gte: targetStart, lte: targetEnd } },
+      ];
     }
+
+    let matchingBookings: SerializedBookingInput[] = await prisma.booking.findMany({
+      where,
+      include: { orders: true },
+      orderBy: { createdAt: 'desc' },
+    });
 
     if (search) {
-      filters.push({ $or: [
-        { bookingId: { $regex: search, $options: 'i' } },
-        { 'guestSnapshot.name': { $regex: search, $options: 'i' } },
-        { 'guestSnapshot.phone': { $regex: search, $options: 'i' } },
-      ] });
+      const normalizedSearch = search.toLowerCase();
+      matchingBookings = matchingBookings.filter((booking) => {
+        const guest = booking.guestSnapshot as { name?: string; phone?: string; email?: string };
+        return (
+          booking.bookingId.toLowerCase().includes(normalizedSearch) ||
+          guest.name?.toLowerCase().includes(normalizedSearch) ||
+          guest.phone?.toLowerCase().includes(normalizedSearch) ||
+          guest.email?.toLowerCase().includes(normalizedSearch)
+        );
+      });
     }
 
-    if (filters.length) {
-      query.$and = filters;
-    }
-
-    let total = 0;
-    let bookings: unknown[] = [];
-
-    try {
-      await dbConnect();
-      total = await Booking.countDocuments(query);
-      bookings = await Booking.find(query)
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .lean();
-    } catch (error) {
-      if (!isDatabaseUnavailable(error)) {
-        throw error;
-      }
-
-      const localResult = await queryLocalBookings({ status, date, search, page, limit });
-      total = localResult.pagination.total;
-      bookings = localResult.bookings;
-    }
+    const normalizedPage = Math.max(1, page);
+    const normalizedLimit = Math.max(1, limit);
+    const total = matchingBookings.length;
+    const bookings = matchingBookings.slice((normalizedPage - 1) * normalizedLimit, normalizedPage * normalizedLimit);
 
     return NextResponse.json({
       success: true,
-      data: bookings,
+      data: bookings.map(serializeBooking),
       pagination: {
         total,
-        page,
-        limit,
-        pages: Math.ceil(total / limit),
+        page: normalizedPage,
+        limit: normalizedLimit,
+        pages: Math.ceil(total / normalizedLimit),
       },
     });
   } catch (error) {
@@ -251,25 +335,21 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  let bodyForFallback: Record<string, any> | null = null;
-
   try {
-    const body = await request.json();
-    bodyForFallback = body;
-    const {
-      guest,
-      rooms,
-      checkIn,
-      checkOut,
-      adults,
-      children,
-      packageId,
-      packageSlug,
-      addOns,
-      specialRequests,
-      source = 'website',
-      couponCode,
-    } = body;
+    const contentType = request.headers.get('content-type') || '';
+    let uploadedFile: File | null = null;
+    let body: Record<string, any>;
+
+    if (contentType.includes('multipart/form-data')) {
+      const formData = await request.formData();
+      body = JSON.parse(String(formData.get('booking') || '{}'));
+      const file = formData.get('document');
+      uploadedFile = file instanceof File ? file : null;
+    } else {
+      body = await request.json();
+    }
+
+    const { guest, rooms, checkIn, checkOut } = body;
 
     if (!guest || !rooms || !checkIn || !checkOut) {
       return NextResponse.json(
@@ -303,127 +383,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    try {
-      await dbConnect();
-    } catch (error) {
-      if (!isDatabaseUnavailable(error)) {
-        throw error;
-      }
-
-      const booking = await createLocalBookingFromBody(body);
-      return NextResponse.json({
-        success: true,
-        data: booking,
-        message: 'Booking created successfully',
-      });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guest.email)) {
+      return NextResponse.json(
+        { success: false, error: 'A valid email address is required' },
+        { status: 400 }
+      );
     }
 
-    let guestDoc = await Guest.findOne({ phone: guest.phone });
-    if (!guestDoc) {
-      guestDoc = await Guest.create({
-        name: guest.name,
-        email: guest.email,
-        phone: guest.phone,
-        address: guest.address,
-        city: guest.city,
-        state: guest.state,
-        pincode: guest.pincode,
-        idType: guest.idType,
-        idNumber: guest.idNumber,
-      });
-    }
-
-    let baseAmount = 0;
-    const roomSnapshots = [];
-
-    let resolvedPackageId = packageId;
-    if (!resolvedPackageId && packageSlug) {
-      const pkg = await Package.findOne({ slug: packageSlug, isActive: true })
-        .select('_id')
-        .lean<{ _id: mongoose.Types.ObjectId } | null>();
-      resolvedPackageId = pkg?._id;
-    }
-
-    for (const roomItem of rooms) {
-      const roomTypeIdOrSlug = roomItem.roomTypeId || roomItem.roomType || roomItem.slug;
-      const roomType = mongoose.Types.ObjectId.isValid(roomTypeIdOrSlug)
-        ? await RoomType.findById(roomTypeIdOrSlug)
-        : await RoomType.findOne({ slug: roomTypeIdOrSlug });
-      const fallbackRoomType = typeof roomTypeIdOrSlug === 'string'
-        ? fallbackRoomTypes[roomTypeIdOrSlug as FallbackRoomSlug]
-        : undefined;
-      const roomTypeSnapshot = roomType || fallbackRoomType;
-
-      if (!roomTypeSnapshot || !roomTypeSnapshot.isActive) {
-        return NextResponse.json(
-          { success: false, error: 'Selected room type is not available' },
-          { status: 400 }
-        );
-      }
-
-      baseAmount += roomTypeSnapshot.basePrice * nights;
-      roomSnapshots.push({
-        roomTypeId: roomTypeSnapshot._id,
-        roomTypeName: roomTypeSnapshot.name,
-        roomId: roomItem.roomId,
-        roomNumber: roomItem.roomNumber,
-        pricePerNight: roomTypeSnapshot.basePrice,
-      });
-    }
-
-    const normalizedAddOns: NormalizedBookingAddOn[] = (addOns || []).map((item: BookingAddOnInput) => ({
-      name: item.name || 'Add-on',
-      price: Number(item.price || 0),
-      quantity: Math.max(1, Number(item.quantity || 1)),
-      unit: item.unit || 'per_booking',
-    }));
-
-    const addOnAmount = normalizedAddOns.reduce((total: number, item: NormalizedBookingAddOn) => {
-      const unitMultiplier = item.unit === 'per_night' ? nights : item.unit === 'per_room' ? rooms.length : 1;
-      return total + item.price * item.quantity * unitMultiplier;
-    }, 0);
-
-    const taxAmount = Math.round((baseAmount + addOnAmount) * 0.12);
-
-    const totalAmount = baseAmount + addOnAmount + taxAmount;
-
-    const bookingId = generateBookingId();
-
-    const booking = await Booking.create({
-      bookingId,
-      guestId: guestDoc._id,
-      guestSnapshot: {
-        name: guest.name,
-        email: guest.email,
-        phone: guest.phone,
-        address: guest.address,
-      },
-      rooms: roomSnapshots,
-      checkIn: checkInDate,
-      checkOut: checkOutDate,
-      adults: adults || 1,
-      children: children || 0,
-      nights,
-      packageId: resolvedPackageId,
-      addOns: normalizedAddOns,
-      baseAmount,
-      addOnAmount,
-      taxAmount,
-      discountAmount: 0,
-      totalAmount,
-      paymentStatus: 'pending',
-      bookingStatus: 'pending',
-      source,
-      specialRequests,
-      couponCode,
-    });
-
-    // Update guest stats
-    await Guest.findByIdAndUpdate(guestDoc._id, {
-      $inc: { totalStays: 1, totalSpent: totalAmount },
-      lastVisit: new Date(),
-    });
-
+    const booking = await createLocalBookingFromBody(body, uploadedFile);
     return NextResponse.json({
       success: true,
       data: booking,
@@ -431,24 +398,8 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Create booking error:', error);
-    if (isDatabaseUnavailable(error) && bodyForFallback) {
-      try {
-        const booking = await createLocalBookingFromBody(bodyForFallback);
-        return NextResponse.json({
-          success: true,
-          data: booking,
-          message: 'Booking created successfully',
-        });
-      } catch {
-        return NextResponse.json(
-          { success: false, error: 'Unable to save booking locally' },
-          { status: 500 }
-        );
-      }
-    }
-
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
+      { success: false, error: error instanceof Error ? error.message : 'Internal server error' },
       { status: 500 }
     );
   }
@@ -457,7 +408,7 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const user = await getAuthUser();
-    if (!user || !['admin', 'manager'].includes(user.role)) {
+    if (!user || !isAdminRole(user.role)) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 403 });
     }
 
@@ -483,11 +434,11 @@ export async function PATCH(request: NextRequest) {
       }
 
       update.bookingStatus = bookingStatus;
-      if (bookingStatus === 'confirmed') update.confirmedAt = new Date();
-      if (bookingStatus === 'checked_in') update.checkedInAt = new Date();
-      if (bookingStatus === 'checked_out') update.checkedOutAt = new Date();
+      if (bookingStatus === 'confirmed') update.confirmedAt = new Date().toISOString();
+      if (bookingStatus === 'checked_in') update.checkedInAt = new Date().toISOString();
+      if (bookingStatus === 'checked_out') update.checkedOutAt = new Date().toISOString();
       if (bookingStatus === 'cancelled') {
-        update.cancelledAt = new Date();
+        update.cancelledAt = new Date().toISOString();
         if (cancellationReason) update.cancellationReason = cancellationReason;
       }
     }
@@ -504,21 +455,17 @@ export async function PATCH(request: NextRequest) {
       update.paymentStatus = paymentStatus;
     }
 
-    let booking;
-
-    try {
-      await dbConnect();
-      booking = await Booking.findOneAndUpdate({ bookingId }, update, {
-        new: true,
-        runValidators: true,
-      });
-    } catch (error) {
-      if (!isDatabaseUnavailable(error)) {
-        throw error;
-      }
-
-      booking = await updateLocalBooking(bookingId, update);
-    }
+    const previousBooking = await prisma.booking.findUnique({ where: { bookingId } });
+    const booking = await prisma.booking.update({
+      where: { bookingId },
+      data: {
+        ...update,
+        confirmedAt: update.confirmedAt ? new Date(update.confirmedAt as string) : undefined,
+        checkedInAt: update.checkedInAt ? new Date(update.checkedInAt as string) : undefined,
+        checkedOutAt: update.checkedOutAt ? new Date(update.checkedOutAt as string) : undefined,
+        cancelledAt: update.cancelledAt ? new Date(update.cancelledAt as string) : undefined,
+      },
+    }).catch(() => null);
 
     if (!booking) {
       return NextResponse.json(
@@ -529,7 +476,10 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: booking,
+      data: serializeBooking(booking),
+      whatsappUrl: bookingStatus === 'confirmed' && previousBooking?.bookingStatus !== 'confirmed'
+        ? buildWhatsAppConfirmationUrl(booking)
+        : null,
       message: 'Booking updated successfully',
     });
   } catch (error) {

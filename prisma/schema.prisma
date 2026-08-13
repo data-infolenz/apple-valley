@@ -1,0 +1,205 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique(map: "User_email_key")
+  name      String
+  password  String
+  role      String   @default("admin")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user")
+}
+
+model Customer {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique(map: "Customer_email_key")
+  name      String
+  phone     String?
+  password  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("customer")
+}
+
+model RoomType {
+  id               Int      @id @default(autoincrement())
+  slug             String   @unique(map: "RoomType_slug_key")
+  name             String
+  description      String   @db.Text
+  shortDescription String   @db.Text
+  images           String?  @db.LongText
+  amenities        String?  @db.LongText
+  basePrice        Int
+  maxOccupancy     Int
+  bedType          String
+  size             Int
+  featured         Boolean  @default(false)
+  isActive         Boolean  @default(true)
+  order            Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  rooms            Room[]
+
+  @@map("roomtype")
+}
+
+model Room {
+  id         Int      @id @default(autoincrement())
+  roomNumber String   @unique(map: "Room_roomNumber_key")
+  floor      Int      @default(1)
+  status     String   @default("available")
+  notes      String?  @db.Text
+  isActive   Boolean  @default(true)
+  roomTypeId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  roomType   RoomType @relation(fields: [roomTypeId], references: [id], map: "Room_roomTypeId_fkey")
+
+  @@index([roomTypeId], map: "Room_roomTypeId_fkey")
+  @@map("room")
+}
+
+model AddOn {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique(map: "AddOn_slug_key")
+  name        String
+  description String   @db.Text
+  category    String
+  price       Int
+  pricingUnit String   @default("per_booking")
+  image       String?
+  available   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("addon")
+}
+
+model Package {
+  id               Int       @id @default(autoincrement())
+  slug             String    @unique(map: "Package_slug_key")
+  name             String
+  description      String    @db.Text
+  shortDescription String    @db.Text
+  image            String?
+  gallery          String?   @db.LongText
+  roomTypeSlug     String?
+  nights           Int
+  inclusions       String    @db.LongText
+  mealPlan         String    @default("Room only")
+  hasTransport     Boolean   @default(false)
+  transportDetails String?   @db.Text
+  addOns           String?   @db.LongText
+  price            Int
+  originalPrice    Int?
+  maxOccupancy     Int
+  featured         Boolean   @default(false)
+  isActive         Boolean   @default(true)
+  validFrom        DateTime?
+  validTo          DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@map("package")
+}
+
+model Booking {
+  id                 Int       @id @default(autoincrement())
+  bookingId          String    @unique(map: "Booking_bookingId_key")
+  guestSnapshot      String    @db.LongText
+  rooms              String    @db.LongText
+  checkIn            DateTime
+  checkOut           DateTime
+  adults             Int       @default(1)
+  children           Int       @default(0)
+  nights             Int
+  packageId          String?
+  addOns             String    @db.LongText
+  baseAmount         Int
+  addOnAmount        Int
+  taxAmount          Int
+  discountAmount     Int       @default(0)
+  totalAmount        Int
+  paymentStatus      String    @default("pending")
+  bookingStatus      String    @default("pending")
+  source             String    @default("website")
+  specialRequests    String?   @db.Text
+  couponCode         String?
+  confirmedAt        DateTime?
+  checkedInAt        DateTime?
+  checkedOutAt       DateTime?
+  cancelledAt        DateTime?
+  cancellationReason String?   @db.Text
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  documentName       String?
+  documentType       String?
+  documentUrl        String?
+  orders             Order[]
+
+  @@index([bookingStatus], map: "Booking_bookingStatus_idx")
+  @@index([checkIn], map: "Booking_checkIn_idx")
+  @@index([checkOut], map: "Booking_checkOut_idx")
+  @@index([createdAt], map: "Booking_createdAt_idx")
+  @@index([paymentStatus], map: "Booking_paymentStatus_idx")
+  @@map("booking")
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  bookingId Int
+  item      String
+  quantity  Int      @default(1)
+  price     Int
+  total     Int
+  status    String   @default("pending")
+  orderedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade, map: "Order_bookingId_fkey")
+
+  @@index([bookingId], map: "Order_bookingId_idx")
+  @@index([status], map: "Order_status_idx")
+  @@map("order")
+}
+
+model PincodeLocation {
+  id        Int      @id @default(autoincrement())
+  pincode   String
+  city      String
+  district  String
+  state     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([pincode, city, district, state], map: "PincodeLocation_pincode_city_district_state_key")
+  @@index([district], map: "PincodeLocation_district_idx")
+  @@index([pincode], map: "PincodeLocation_pincode_idx")
+  @@index([state], map: "PincodeLocation_state_idx")
+  @@map("pincodelocation")
+}
+
+model MonthlyReport {
+  id        Int      @id @default(autoincrement())
+  month     Int
+  year      Int
+  title     String
+  data      String   @db.LongText
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([month, year], map: "MonthlyReport_month_year_key")
+  @@map("monthlyreport")
+}

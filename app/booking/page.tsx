@@ -47,6 +47,7 @@ type RoomTypeOption = {
   price: number;
   maxOccupancy: number;
   size: number;
+  availableRooms?: number;
 };
 
 const fallbackRoomTypes: RoomTypeOption[] = [
@@ -75,6 +76,51 @@ const steps = [
   { id: 5, name: 'Confirmation', icon: CheckCircle2 },
 ];
 
+const indianStates = [
+  'Andaman and Nicobar Islands',
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chandigarh',
+  'Chhattisgarh',
+  'Dadra and Nagar Haveli and Daman and Diu',
+  'Delhi',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jammu and Kashmir',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Ladakh',
+  'Lakshadweep',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Puducherry',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal',
+];
+
+type PinCodePostOffice = {
+  Name?: string;
+  District?: string;
+  State?: string;
+};
+
 function BookingContent() {
   const searchParams = useSearchParams();
   const packageSlug = searchParams.get('package') || undefined;
@@ -83,6 +129,9 @@ function BookingContent() {
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
   const [confirmedBookingId, setConfirmedBookingId] = useState('');
   const [roomTypes, setRoomTypes] = useState<RoomTypeOption[]>(fallbackRoomTypes);
+  const [documentFile, setDocumentFile] = useState<File | null>(null);
+  const [districtOptions, setDistrictOptions] = useState<string[]>([]);
+  const [isPincodeLoading, setIsPincodeLoading] = useState(false);
 
   const [bookingData, setBookingData] = useState({
     checkIn: '',
@@ -96,6 +145,7 @@ function BookingContent() {
     guestPhone: '',
     guestAddress: '',
     guestCity: '',
+    guestDistrict: '',
     guestState: 'Tamil Nadu',
     guestPincode: '',
     specialRequests: '',
@@ -139,7 +189,7 @@ function BookingContent() {
           setRoomTypes(fetchedRoomTypes);
         }
       } catch {
-        // Keep the static room list if MongoDB is not reachable yet.
+        // Keep the static room list if the room API is not reachable yet.
       }
     };
 
@@ -159,6 +209,32 @@ function BookingContent() {
         : prev.roomType,
     }));
   }, [checkInParam, checkOutParam, guestsParam, roomTypeParam, roomTypes]);
+
+  useEffect(() => {
+    if (!bookingData.checkIn || !bookingData.checkOut) return;
+
+    const loadAvailability = async () => {
+      try {
+        const params = new URLSearchParams({
+          checkIn: bookingData.checkIn,
+          checkOut: bookingData.checkOut,
+        });
+        const response = await fetch(`/api/rooms/availability?${params.toString()}`);
+        const result = await response.json();
+
+        if (!response.ok || !result.success) return;
+
+        setRoomTypes((current) => current.map((room) => {
+          const availability = result.data.find((item: { slug: string }) => item.slug === room.id);
+          return availability ? { ...room, availableRooms: availability.availableRooms } : room;
+        }));
+      } catch {
+        // Keep existing room options if availability cannot be loaded.
+      }
+    };
+
+    loadAvailability();
+  }, [bookingData.checkIn, bookingData.checkOut]);
 
   const nights = (() => {
     if (!bookingData.checkIn || !bookingData.checkOut) return 0;
@@ -185,6 +261,10 @@ function BookingContent() {
     if (currentStep === 1) {
       if (!bookingData.checkIn || !bookingData.checkOut || !bookingData.roomType || nights < 1) {
         toast.error('Please select valid dates and room type');
+        return;
+      }
+      if (selectedRoom?.availableRooms !== undefined && bookingData.rooms > selectedRoom.availableRooms) {
+        toast.error(`Only ${selectedRoom.availableRooms} ${selectedRoom.name} available for these dates`);
         return;
       }
     }
@@ -223,33 +303,40 @@ function BookingContent() {
         })
         .filter(Boolean);
 
-      const response = await fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          guest: {
-            name: bookingData.guestName,
-            email: bookingData.guestEmail,
-            phone: bookingData.guestPhone,
+      const bookingPayload = {
+        guest: {
+          name: bookingData.guestName,
+          email: bookingData.guestEmail,
+          phone: bookingData.guestPhone,
             address: bookingData.guestAddress,
             city: bookingData.guestCity,
+            district: bookingData.guestDistrict,
             state: bookingData.guestState,
             pincode: bookingData.guestPincode,
-          },
-          rooms: Array.from({ length: bookingData.rooms }, () => ({
-            roomTypeId: selectedRoom?.roomTypeId,
-            roomType: selectedRoom?.id,
-          })),
-          checkIn: bookingData.checkIn,
-          checkOut: bookingData.checkOut,
-          adults: bookingData.adults,
-          children: bookingData.children,
-          addOns: selectedAddOns,
-          specialRequests: bookingData.specialRequests,
-          couponCode: bookingData.couponCode,
-          packageSlug,
-          source: 'website',
-        }),
+        },
+        rooms: Array.from({ length: bookingData.rooms }, () => ({
+          roomTypeId: selectedRoom?.roomTypeId,
+          roomType: selectedRoom?.id,
+        })),
+        checkIn: bookingData.checkIn,
+        checkOut: bookingData.checkOut,
+        adults: bookingData.adults,
+        children: bookingData.children,
+        addOns: selectedAddOns,
+        specialRequests: bookingData.specialRequests,
+        couponCode: bookingData.couponCode,
+        packageSlug,
+        source: 'website',
+      };
+      const formData = new FormData();
+      formData.append('booking', JSON.stringify(bookingPayload));
+      if (documentFile) {
+        formData.append('document', documentFile);
+      }
+
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        body: formData,
       });
 
       const result = await response.json();
@@ -278,6 +365,45 @@ function BookingContent() {
       }
       return quantity > 0 ? { ...prev, selectedAddOns: [...prev.selectedAddOns, { id, quantity }] } : prev;
     });
+  };
+
+  const handlePincodeChange = async (value: string) => {
+    const pincode = value.replace(/\D/g, '').slice(0, 6);
+    setBookingData(prev => ({ ...prev, guestPincode: pincode }));
+
+    if (pincode.length !== 6) {
+      setDistrictOptions([]);
+      return;
+    }
+
+    setIsPincodeLoading(true);
+    try {
+      const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+      const result = await response.json();
+      const postOffices: PinCodePostOffice[] = result?.[0]?.PostOffice || [];
+
+      if (!postOffices.length) {
+        setDistrictOptions([]);
+        toast.error('No city/state found for this pincode');
+        return;
+      }
+
+      const districts = Array.from(new Set(postOffices.map((office) => office.District).filter(Boolean))) as string[];
+      const firstOffice = postOffices[0];
+
+      setDistrictOptions(districts);
+      setBookingData(prev => ({
+        ...prev,
+        guestPincode: pincode,
+        guestCity: firstOffice.Name || prev.guestCity,
+        guestDistrict: firstOffice.District || prev.guestDistrict,
+        guestState: firstOffice.State || prev.guestState,
+      }));
+    } catch {
+      toast.error('Unable to fetch pincode details');
+    } finally {
+      setIsPincodeLoading(false);
+    }
   };
 
   const formatDate = (dateStr: string) => {
@@ -359,20 +485,27 @@ function BookingContent() {
                       </div>
                       <Label className="mb-3 block">Select Room Type *</Label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {roomTypes.map((room) => (
-                          <Card key={room.id} className={`cursor-pointer transition-all ${bookingData.roomType === room.id ? 'ring-2 ring-forest-600 bg-forest-50 dark:bg-forest-900/50' : ''}`} onClick={() => setBookingData({ ...bookingData, roomType: room.id })}>
+                        {roomTypes.map((room) => {
+                          const unavailable = room.availableRooms !== undefined && room.availableRooms <= 0;
+                          return (
+                          <Card key={room.id} className={`cursor-pointer transition-all ${bookingData.roomType === room.id ? 'ring-2 ring-forest-600 bg-forest-50 dark:bg-forest-900/50' : ''} ${unavailable ? 'opacity-60' : ''}`} onClick={() => !unavailable && setBookingData({ ...bookingData, roomType: room.id })}>
                             <CardContent className="p-4">
                               <div className="flex items-start justify-between">
                                 <div>
                                   <p className="font-medium text-forest-800 dark:text-white">{room.name}</p>
                                   <p className="text-sm text-forest-600 dark:text-mist-400">{room.maxOccupancy} guests | {room.size} sq ft</p>
+                                  {room.availableRooms !== undefined && (
+                                    <p className={`text-sm mt-1 ${room.availableRooms > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                      {room.availableRooms} available for selected dates
+                                    </p>
+                                  )}
                                 </div>
                                 {bookingData.roomType === room.id && <CheckCircle2 className="w-5 h-5 text-forest-600" />}
                               </div>
                               <p className="text-lg font-bold text-forest-800 dark:text-white mt-2">₹{room.price.toLocaleString()}<span className="text-sm font-normal text-forest-500">/night</span></p>
                             </CardContent>
                           </Card>
-                        ))}
+                        )})}
                       </div>
                     </motion.div>
                   )}
@@ -387,10 +520,45 @@ function BookingContent() {
                         </div>
                         <div><Label>Email Address *</Label><Input type="email" className="mt-1" value={bookingData.guestEmail} onChange={(e) => setBookingData({ ...bookingData, guestEmail: e.target.value })} /></div>
                         <div><Label>Address</Label><Textarea className="mt-1" value={bookingData.guestAddress} onChange={(e) => setBookingData({ ...bookingData, guestAddress: e.target.value })} /></div>
-                        <div className="grid grid-cols-3 gap-4">
+                        <div>
+                          <Label>Document / Photo</Label>
+                          <Input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp,application/pdf"
+                            className="mt-1"
+                            onChange={(e) => setDocumentFile(e.target.files?.[0] || null)}
+                          />
+                          <p className="text-xs text-forest-500 mt-1">JPG, PNG, WEBP, or PDF up to 5MB</p>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                          <div>
+                            <Label>Pincode</Label>
+                            <Input className="mt-1" value={bookingData.guestPincode} onChange={(e) => handlePincodeChange(e.target.value)} />
+                            {isPincodeLoading && <p className="text-xs text-forest-500 mt-1">Finding city...</p>}
+                          </div>
                           <div><Label>City</Label><Input className="mt-1" value={bookingData.guestCity} onChange={(e) => setBookingData({ ...bookingData, guestCity: e.target.value })} /></div>
-                          <div><Label>State</Label><Input className="mt-1" value={bookingData.guestState} onChange={(e) => setBookingData({ ...bookingData, guestState: e.target.value })} /></div>
-                          <div><Label>Pincode</Label><Input className="mt-1" value={bookingData.guestPincode} onChange={(e) => setBookingData({ ...bookingData, guestPincode: e.target.value })} /></div>
+                          <div>
+                            <Label>District</Label>
+                            <Select value={bookingData.guestDistrict} onValueChange={(value) => setBookingData({ ...bookingData, guestDistrict: value })}>
+                              <SelectTrigger className="mt-1"><SelectValue placeholder="Select district" /></SelectTrigger>
+                              <SelectContent>
+                                {(districtOptions.length ? districtOptions : bookingData.guestDistrict ? [bookingData.guestDistrict] : []).map((district) => (
+                                  <SelectItem key={district} value={district}>{district}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label>State</Label>
+                            <Select value={bookingData.guestState} onValueChange={(value) => setBookingData({ ...bookingData, guestState: value })}>
+                              <SelectTrigger className="mt-1"><SelectValue placeholder="Select state" /></SelectTrigger>
+                              <SelectContent>
+                                {indianStates.map((state) => (
+                                  <SelectItem key={state} value={state}>{state}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </div>
                       </div>
                     </motion.div>

@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/mongodb';
-import User from '@/models/User';
-import { comparePassword } from '@/lib/auth';
+import { comparePassword, isAdminRole, normalizeRole, signToken } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { clearRateLimit, getClientIp, isRateLimited } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const email = String(body.email || '').trim().toLowerCase();
+    const password = String(body.password || '');
+    const rateLimitKey = `admin:${getClientIp(request.headers)}:${email || 'missing'}`;
 
     if (!email || !password) {
       return NextResponse.json(
@@ -15,42 +17,46 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await dbConnect();
+    if (isRateLimited(rateLimitKey)) {
+      return NextResponse.json(
+        { success: false, error: 'Too many login attempts. Try again later.' },
+        { status: 429 }
+      );
+    }
 
-    const normalizedEmail = email.toLowerCase();
-    const user = await User.findOne({
-      email: normalizedEmail === 'admin@applevalley.com'
-        ? { $in: [normalizedEmail, 'admin@kodaimist.com'] }
-        : normalizedEmail,
+    const user = await prisma.user.findUnique({
+      where: { email },
     });
 
-    if (!user || !user.isActive) {
+    if (!user || !user.isActive || !isAdminRole(user.role)) {
       return NextResponse.json(
         { success: false, error: 'Invalid credentials' },
         { status: 401 }
       );
     }
 
-    const isMatch = await comparePassword(password, user.password);
+    const passwordMatches = await comparePassword(password, user.password);
 
-    if (!isMatch) {
+    if (!passwordMatches) {
       return NextResponse.json(
         { success: false, error: 'Invalid credentials' },
         { status: 401 }
       );
     }
 
-    const token = await import('@/lib/auth').then(m => m.signToken({
-      userId: user._id.toString(),
+    clearRateLimit(rateLimitKey);
+
+    const token = await signToken({
+      userId: user.id.toString(),
       email: user.email,
-      role: user.role,
+      role: normalizeRole(user.role),
       name: user.name,
-    }));
+    });
 
     const response = NextResponse.json({
       success: true,
       data: {
-        id: user._id,
+        id: user.id,
         email: user.email,
         name: user.name,
         role: user.role,
@@ -61,7 +67,7 @@ export async function POST(request: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge: 60 * 30,
       path: '/',
     });
 

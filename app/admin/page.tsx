@@ -294,7 +294,7 @@ export default function AdminDashboard() {
                         {stat.change}
                       </span>
                       <span className="text-xs text-forest-400">
-                        {stat.change === 'Live' ? 'from MongoDB' : ''}
+                        {stat.change === 'Live' ? 'from SQL' : ''}
                       </span>
                     </div>
                   </div>

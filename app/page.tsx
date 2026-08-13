@@ -406,7 +406,7 @@ export default function Home() {
       </section>
 
       {/* Featured Rooms */}
-      <section className="py-20 bg-stone-50 dark:bg-forest-950">
+      <section id="rooms" className="py-20 bg-stone-50 dark:bg-forest-950 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -561,7 +561,7 @@ export default function Home() {
       </section>
 
       {/* Nearby Attractions */}
-      <section className="py-20 bg-stone-50 dark:bg-forest-950">
+      <section id="attractions" className="py-20 bg-stone-50 dark:bg-forest-950 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -832,7 +832,7 @@ export default function Home() {
       </section>
 
       {/* Packages */}
-      <section className="py-20 bg-white dark:bg-forest-900">
+      <section id="packages" className="py-20 bg-white dark:bg-forest-900 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -912,7 +912,7 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 bg-forest-50 dark:bg-forest-950">
+      <section id="reviews" className="py-20 bg-forest-50 dark:bg-forest-950 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -962,7 +962,7 @@ export default function Home() {
       </section>
 
       {/* Map & Contact */}
-      <section className="py-20 bg-white dark:bg-forest-900">
+      <section id="contact" className="py-20 bg-white dark:bg-forest-900 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <motion.div
@@ -1019,7 +1019,7 @@ export default function Home() {
       </section>
 
       {/* WhatsApp CTA */}
-      <section className="py-12 bg-green-600">
+      <section className="py-12 bg-gradient-to-b from-green-700 to-green-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-white">
@@ -1030,7 +1030,7 @@ export default function Home() {
               href="https://wa.me/919361979918?text=Hi,%20I%20would%20like%20to%20inquire%20about%20booking%20at%20Apple%20Valley"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-green-600 font-semibold rounded-lg hover:bg-green-50 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-green-700 font-semibold rounded-lg shadow-sm hover:bg-green-50 transition-colors"
             >
               <Phone className="w-5 h-5" />
               WhatsApp Us Now
