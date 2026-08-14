@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
-import { updateSession } from '@/utils/supabase/middleware';
+import { updateSession } from './utils/supabase/middleware';
 
 function isAdminRole(role: unknown) {
   return ['admin', 'manager'].includes(String(role || '').trim().toLowerCase());
