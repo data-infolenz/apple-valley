@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "seed": "tsx prisma/seed.ts",
     "db:deploy": "prisma migrate deploy && npm run seed",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate && node scripts/patch-prisma-studio-mariadb.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
