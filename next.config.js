@@ -1,3 +1,9 @@
+const { execSync } = require('child_process');
+
+if (process.env.SKIP_PRISMA_GENERATE !== '1') {
+  execSync('npx prisma generate', { stdio: 'inherit' });
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async headers() {
