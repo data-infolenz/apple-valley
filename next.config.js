@@ -6,6 +6,7 @@ if (process.env.SKIP_PRISMA_GENERATE !== '1') {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  serverExternalPackages: ['@prisma/adapter-pg', 'pg'],
   async headers() {
     return [
       {

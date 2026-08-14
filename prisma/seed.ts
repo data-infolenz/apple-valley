@@ -1,5 +1,6 @@
 import "dotenv/config";
 
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { readFile } from "fs/promises";
@@ -11,8 +12,6 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is not set");
 }
 
-const runtimeRequire = eval("require") as NodeRequire;
-const { PrismaPg } = runtimeRequire("@prisma/adapter-pg");
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
 });
