@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { readFile } from "fs/promises";
@@ -8,24 +8,13 @@ import path from "path";
 import { encodeJsonField } from "../lib/json-fields";
 import { ADDONS_DATA, DEFAULT_AMENITIES, PACKAGES_DATA, ROOM_CATEGORIES } from "../lib/constants";
 
-function getMariaDbConfig() {
-  if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL is not set");
-  }
-
-  const databaseUrl = new URL(process.env.DATABASE_URL);
-
-  return {
-    host: databaseUrl.hostname,
-    port: databaseUrl.port ? Number(databaseUrl.port) : 3306,
-    user: decodeURIComponent(databaseUrl.username),
-    password: decodeURIComponent(databaseUrl.password),
-    database: databaseUrl.pathname.replace(/^\//, ""),
-    connectionLimit: 5,
-  };
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is not set");
 }
 
-const adapter = new PrismaMariaDb(getMariaDbConfig());
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
 const prisma = new PrismaClient({ adapter });
 
 function slugify(value: string) {

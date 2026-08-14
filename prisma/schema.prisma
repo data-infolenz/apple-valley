@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
 
 model User {
@@ -38,8 +38,8 @@ model RoomType {
   name             String
   description      String   @db.Text
   shortDescription String   @db.Text
-  images           String?  @db.LongText
-  amenities        String?  @db.LongText
+  images           String?  @db.Text
+  amenities        String?  @db.Text
   basePrice        Int
   maxOccupancy     Int
   bedType          String
@@ -66,7 +66,7 @@ model Room {
   updatedAt  DateTime @updatedAt
   roomType   RoomType @relation(fields: [roomTypeId], references: [id], map: "Room_roomTypeId_fkey")
 
-  @@index([roomTypeId], map: "Room_roomTypeId_fkey")
+  @@index([roomTypeId], map: "Room_roomTypeId_idx")
   @@map("room")
 }
 
@@ -94,14 +94,14 @@ model Package {
   description      String    @db.Text
   shortDescription String    @db.Text
   image            String?
-  gallery          String?   @db.LongText
+  gallery          String?   @db.Text
   roomTypeSlug     String?
   nights           Int
-  inclusions       String    @db.LongText
+  inclusions       String    @db.Text
   mealPlan         String    @default("Room only")
   hasTransport     Boolean   @default(false)
   transportDetails String?   @db.Text
-  addOns           String?   @db.LongText
+  addOns           String?   @db.Text
   price            Int
   originalPrice    Int?
   maxOccupancy     Int
@@ -118,15 +118,15 @@ model Package {
 model Booking {
   id                 Int       @id @default(autoincrement())
   bookingId          String    @unique(map: "Booking_bookingId_key")
-  guestSnapshot      String    @db.LongText
-  rooms              String    @db.LongText
+  guestSnapshot      String    @db.Text
+  rooms              String    @db.Text
   checkIn            DateTime
   checkOut           DateTime
   adults             Int       @default(1)
   children           Int       @default(0)
   nights             Int
   packageId          String?
-  addOns             String    @db.LongText
+  addOns             String    @db.Text
   baseAmount         Int
   addOnAmount        Int
   taxAmount          Int
@@ -196,7 +196,7 @@ model MonthlyReport {
   month     Int
   year      Int
   title     String
-  data      String   @db.LongText
+  data      String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
