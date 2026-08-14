@@ -10,7 +10,7 @@ function getSecret() {
   const secret = process.env.JWT_SECRET;
 
   if (process.env.NODE_ENV === 'production' && (!secret || secret.length < 32)) {
-    throw new Error('JWT_SECRET must be set to at least 32 characters in production');
+    return null;
   }
 
   return new TextEncoder().encode(secret || 'apple-valley-local-dev-secret');
@@ -20,7 +20,10 @@ async function verifyToken(token?: string) {
   if (!token) return null;
 
   try {
-    const { payload } = await jwtVerify(token, getSecret());
+    const secret = getSecret();
+    if (!secret) return null;
+
+    const { payload } = await jwtVerify(token, secret);
     return payload;
   } catch {
     return null;
