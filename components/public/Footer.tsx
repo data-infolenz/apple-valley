@@ -41,9 +41,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-forest-400 to-forest-600 flex items-center justify-center">
-                <span className="text-white font-heading font-bold text-xl">AV</span>
-              </div>
+              <img src="/src/apple%20logo.png" alt="Apple Valley Resort logo" width={76} height={60} className="h-12 w-[61px] md:h-16 md:w-[81px] rounded-lg bg-white object-contain p-1 shrink-0" />
               <div>
                 <h3 className="font-heading text-xl font-semibold">Apple Valley</h3>
                 <p className="text-xs text-mist-400 tracking-wider uppercase">Resort</p>

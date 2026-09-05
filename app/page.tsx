@@ -3,12 +3,17 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Star, MapPin, Clock, Shield, Heart, Users, Coffee, Mountain, ChevronLeft, ChevronRight, Phone, Calendar } from 'lucide-react';
+import RoomSlideshow from '@/components/public/RoomSlideshow';
+import { roomImages } from '@/lib/room-images';
+import { getRoomAmenities } from '@/lib/room-amenities';
+import { ArrowRight, Star, MapPin, Clock, Shield, Heart, Coffee, Mountain, ChevronLeft, ChevronRight, Phone } from 'lucide-react';
 import Header from '@/components/public/Header';
+import BackgroundParticles from '@/components/public/BackgroundParticles';
 import Footer from '@/components/public/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import restaurantImage from '@/components/public/src/img/in house restaurant.jpg';
 import kodaiLake1 from '@/components/public/src/img/1.png';
 import kodaiLake2 from '@/components/public/src/img/kodai lake 2.png';
 import kodaiLake3 from '@/components/public/src/img/kodai lake 3.png';
@@ -26,10 +31,7 @@ import pineForest1 from '@/components/public/src/img/pine forest 1.jpg';
 import pineForest2 from '@/components/public/src/img/pine forest 2.jpg';
 import pineForest3 from '@/components/public/src/img/pine forest 3.jpg';
 import pineForest4 from '@/components/public/src/img/pine forest 4.jpg';
-import premiumBalconyRoom from '@/components/public/src/img/room pic 1.webp';
-import honeymoonSuiteRoom from '@/components/public/src/img/room pic 2.jpg';
-import familyCottageRoom from '@/components/public/src/img/room pic 3.jpg';
-import hotelOutlook from '@/components/public/src/img/hotel outlook.jpg';
+import whyChooseImage from '@/public/why to choose img.png';
 import coupleMistyStayPackage from '@/components/public/src/img/Couple Misty Stay.jpg';
 import familyVacationPackage from '@/components/public/src/img/Family Vacation.jpg';
 import honeymoonPackage from '@/components/public/src/img/Honeymoon Package.jpg';
@@ -42,6 +44,21 @@ const fadeInUp = {
 const staggerContainer = {
   animate: { transition: { staggerChildren: 0.1 } },
 };
+
+const heroSlides = [
+  '/landing%20page/front.png',
+  '/landing%20page/IMG_6506.jpg',
+  '/landing%20page/IMG_6509.jpg',
+  '/landing%20page/IMG_6523.jpg',
+  '/landing%20page/IMG_6524.jpg',
+  '/landing%20page/IMG_6525.jpg',
+  '/landing%20page/IMG_6686.jpg',
+  '/landing%20page/IMG_6699.jpg',
+  '/landing%20page/IMG_6703.jpg',
+  '/landing%20page/reception.png',
+  '/landing%20page/recption%202.png',
+  '/landing%20page/waiting%20area.png',
+];
 
 const kodaiLakeImages = [
   kodaiLake1.src,
@@ -74,12 +91,6 @@ const pineForestImages = [
 ];
 
 export default function Home() {
-  const [searchParams, setSearchParams] = useState({
-    checkIn: '',
-    checkOut: '',
-    guests: '2',
-    roomType: '',
-  });
   const [kodaiLakeIndex, setKodaiLakeIndex] = useState(0);
   const [kodaiLakeTouchStart, setKodaiLakeTouchStart] = useState<number | null>(null);
   const [coakersWalkIndex, setCoakersWalkIndex] = useState(0);
@@ -88,9 +99,11 @@ export default function Home() {
   const [pillarRocksTouchStart, setPillarRocksTouchStart] = useState<number | null>(null);
   const [pineForestIndex, setPineForestIndex] = useState(0);
   const [pineForestTouchStart, setPineForestTouchStart] = useState<number | null>(null);
+  const [heroSlideIndex, setHeroSlideIndex] = useState(0);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
+      setHeroSlideIndex((current) => (current + 1) % heroSlides.length);
       setKodaiLakeIndex((current) => (current + 1) % kodaiLakeImages.length);
       setCoakersWalkIndex((current) => (current + 1) % coakersWalkImages.length);
       setPillarRocksIndex((current) => (current + 1) % pillarRocksImages.length);
@@ -142,31 +155,36 @@ export default function Home() {
 
   const featuredRooms = [
     {
-      id: 'premium-balcony',
-      name: 'Premium Balcony Room',
-      description: 'Step out to your private balcony facing the valley',
+      id: 'deluxe',
+      name: 'Deluxe',
+      description: 'Comfortable room with essential amenities',
+      price: 3500,
+      amenities: getRoomAmenities('deluxe'),
+      badge: 'Best Value',
+    },
+    {
+      id: 'super-deluxe',
+      name: 'Super Deluxe',
+      description: 'Larger premium room with upgraded comfort',
       price: 4500,
-      image: premiumBalconyRoom.src,
-      amenities: ['Lake View', 'Balcony', 'Heater', 'WiFi'],
-      badge: 'Most Popular',
+      amenities: getRoomAmenities('super-deluxe'),
+      badge: 'Popular',
+    },
+    {
+      id: 'triple-deluxe',
+      name: 'Triple Deluxe',
+      description: 'Deluxe room prepared for three guests',
+      price: 5200,
+      amenities: getRoomAmenities('triple-deluxe'),
+      badge: 'Triple Stay',
     },
     {
       id: 'honeymoon-suite',
       name: 'Honeymoon Suite',
-      description: 'Romantic retreat with premium amenities and lake views',
+      description: 'Romantic retreat with a refrigerator and coffee maker',
       price: 7500,
-      image: honeymoonSuiteRoom.src,
-      amenities: ['Lake View', 'Jacuzzi', 'Fireplace', 'Butler Service'],
+      amenities: getRoomAmenities('honeymoon-suite'),
       badge: 'Premium',
-    },
-    {
-      id: 'family-cottage',
-      name: 'Family Cottage',
-      description: 'Spacious wooden cottage perfect for families',
-      price: 6000,
-      image: familyCottageRoom.src,
-      amenities: ['Mountain View', '2 Bedrooms', 'Kitchen', 'Garden'],
-      badge: 'Family Choice',
     },
   ];
 
@@ -183,13 +201,18 @@ export default function Home() {
     },
     {
       icon: Shield,
-      title: 'Safe & Secure',
-      description: '24/7 security and sanitized rooms',
+      title: 'Nearby Police Station',
+      description: 'A police station nearby for added peace of mind',
     },
     {
       icon: Coffee,
       title: 'Dining Experience',
       description: 'Authentic hill-station cuisine with local flavors',
+    },
+    {
+      icon: Clock,
+      title: '24/7 Room Service',
+      description: 'Room service available around the clock for your comfort',
     },
   ];
 
@@ -261,36 +284,24 @@ export default function Home() {
     },
   ];
 
-  const handleSearchRooms = (e: React.FormEvent) => {
-    e.preventDefault();
-    const params = new URLSearchParams();
-
-    if (searchParams.checkIn) params.set('checkIn', searchParams.checkIn);
-    if (searchParams.checkOut) params.set('checkOut', searchParams.checkOut);
-    if (searchParams.guests) params.set('guests', searchParams.guests);
-    if (searchParams.roomType) params.set('roomType', searchParams.roomType);
-
-    window.location.href = `/booking?${params.toString()}`;
-  };
-
   return (
     <div className="min-h-screen">
       <Header />
 
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center">
+      <section className="resort-hero relative min-h-[90vh] flex items-center overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
-          <img
-            src="https://images.pexels.com/photos/358457/pexels-photo-358457.jpeg"
-            alt="Misty hills of Kodaikanal"
-            className="block dark:hidden w-full h-full object-cover brightness-110 saturate-110"
-          />
-          <img
-            src="https://images.pexels.com/photos/1761279/pexels-photo-1761279.jpeg"
-            alt="Misty hills of Kodaikanal"
-            className="hidden dark:block w-full h-full object-cover brightness-75 saturate-100"
-          />
+          {heroSlides.map((slide, index) => (
+            <img
+              key={slide}
+              src={slide}
+              alt="Apple Valley Kodaikanal resort"
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+                index === heroSlideIndex ? 'opacity-100' : 'opacity-0'
+              } brightness-95 saturate-110 dark:brightness-75`}
+            />
+          ))}
           <div className="absolute inset-0 bg-gradient-to-r from-white/75 via-white/40 to-white/5 dark:from-black/70 dark:via-black/50 dark:to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-white/45 via-transparent to-white/10 dark:from-black/60 dark:via-transparent dark:to-transparent" />
         </div>
@@ -301,18 +312,19 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="max-w-2xl"
+            className="max-w-3xl"
           >
-            <Badge className="mb-4 bg-walnut-600/90 text-white border-0">
+            <Badge className="hero-eyebrow mb-4 bg-walnut-600/90 text-white border-0">
               Premium Hill Station Resort
             </Badge>
-            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-forest-950 dark:text-white mb-6 leading-tight">
-              Escape to the Misty Hills of Kodaikanal
+            <h1 className="hero-title font-heading text-4xl sm:text-5xl lg:text-7xl font-medium text-forest-950 dark:text-white mb-6 leading-tight">
+              <span className="hero-line">Escape to the</span>
+              <span className="hero-line hero-line-delay">Misty Hills of <em className="text-walnut-700 dark:text-walnut-300">Kodaikanal</em></span>
             </h1>
-            <p className="text-lg sm:text-xl text-forest-800 dark:text-white/90 mb-8 leading-relaxed">
+            <p className="hero-description text-lg sm:text-xl text-forest-800 dark:text-white/90 mb-8 leading-relaxed">
               Book your perfect stay with lake views, cozy rooms, and peaceful hill-station comfort.
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="hero-actions flex flex-wrap gap-4">
               <Link href="/booking">
                 <Button size="lg" className="bg-walnut-600 hover:bg-walnut-700 text-white">
                   Book Your Stay
@@ -327,86 +339,12 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* Booking Search Panel */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-10 flex justify-end lg:mt-0 lg:absolute lg:right-8 lg:top-[40%] lg:-translate-y-1/2"
-          >
-            <div className="booking-panel w-full sm:max-w-md lg:w-[340px] p-6 ml-auto">
-              <form onSubmit={handleSearchRooms} className="grid grid-cols-1 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-forest-800 dark:text-mist-100 mb-1">
-                    <Calendar className="w-4 h-4 inline mr-1" />
-                    Check-in
-                  </label>
-                  <input
-                    type="date"
-                    className="w-full px-3 py-2.5 rounded-lg border border-forest-300 dark:border-mist-600 bg-white dark:bg-mist-950 text-forest-950 dark:text-mist-50 shadow-sm focus:ring-2 focus:ring-forest-500"
-                    value={searchParams.checkIn}
-                    onChange={(e) => setSearchParams({ ...searchParams, checkIn: e.target.value })}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-forest-800 dark:text-mist-100 mb-1">
-                    <Calendar className="w-4 h-4 inline mr-1" />
-                    Check-out
-                  </label>
-                  <input
-                    type="date"
-                    className="w-full px-3 py-2.5 rounded-lg border border-forest-300 dark:border-mist-600 bg-white dark:bg-mist-950 text-forest-950 dark:text-mist-50 shadow-sm focus:ring-2 focus:ring-forest-500"
-                    value={searchParams.checkOut}
-                    onChange={(e) => setSearchParams({ ...searchParams, checkOut: e.target.value })}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-forest-800 dark:text-mist-100 mb-1">
-                    <Users className="w-4 h-4 inline mr-1" />
-                    Guests
-                  </label>
-                  <select
-                    className="w-full px-3 py-2.5 rounded-lg border border-forest-300 dark:border-mist-600 bg-white dark:bg-mist-950 text-forest-950 dark:text-mist-50 shadow-sm focus:ring-2 focus:ring-forest-500"
-                    value={searchParams.guests}
-                    onChange={(e) => setSearchParams({ ...searchParams, guests: e.target.value })}
-                  >
-                    {[1, 2, 3, 4, 5, 6].map((n) => (
-                      <option key={n} value={n}>{n} {n === 1 ? 'Guest' : 'Guests'}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-forest-800 dark:text-mist-100 mb-1">
-                    Room Type
-                  </label>
-                  <select
-                    className="w-full px-3 py-2.5 rounded-lg border border-forest-300 dark:border-mist-600 bg-white dark:bg-mist-950 text-forest-950 dark:text-mist-50 shadow-sm focus:ring-2 focus:ring-forest-500"
-                    value={searchParams.roomType}
-                    onChange={(e) => setSearchParams({ ...searchParams, roomType: e.target.value })}
-                  >
-                    <option value="">All Rooms</option>
-                    <option value="deluxe-hill-view">Deluxe Hill View</option>
-                    <option value="premium-balcony">Premium Balcony</option>
-                    <option value="family-cottage">Family Cottage</option>
-                    <option value="honeymoon-suite">Honeymoon Suite</option>
-                    <option value="budget-standard">Budget Standard</option>
-                  </select>
-                </div>
-                <div className="flex items-end">
-                  <Button type="submit" className="w-full bg-forest-600 hover:bg-forest-700 text-white">
-                    Search Rooms
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </motion.div>
         </div>
       </section>
 
       {/* Featured Rooms */}
-      <section id="rooms" className="py-20 bg-stone-50 dark:bg-forest-950 scroll-mt-24">
+      <section id="rooms" className="particle-scene rooms-neu-scene py-20 scroll-mt-24">
+        <BackgroundParticles />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -416,15 +354,15 @@ export default function Home() {
             className="text-center mb-12"
           >
             <Badge variant="secondary" className="mb-4">Accommodations</Badge>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-forest-800 dark:text-white mb-4">
+            <motion.h2 variants={fadeInUp} className="font-heading text-3xl sm:text-4xl font-medium text-forest-800 dark:text-white mb-4">
               Featured Rooms & Suites
-            </h2>
+            </motion.h2>
             <p className="text-lg text-forest-600 dark:text-mist-400 max-w-2xl mx-auto">
               Experience comfort in our handcrafted rooms with misty hill views
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
             {featuredRooms.map((room, index) => (
               <motion.div
                 key={room.id}
@@ -433,19 +371,14 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="overflow-hidden group hover:shadow-xl transition-shadow duration-300">
+                <Card className="room-card rooms-neu-panel overflow-hidden group transition-all duration-300 h-full">
                   <div className="relative h-64">
-                    <img
-                      src={room.image}
-                      alt={room.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <RoomSlideshow images={roomImages[room.id]} name={room.name} />
                     <Badge className="absolute top-4 left-4 bg-walnut-600 text-white">
                       {room.badge}
                     </Badge>
                   </div>
-                  <CardContent className="p-6">
+                  <CardContent className="p-6 sm:p-7">
                     <h3 className="font-heading text-xl font-semibold text-forest-800 dark:text-white mb-2">
                       {room.name}
                     </h3>
@@ -456,7 +389,7 @@ export default function Home() {
                       {room.amenities.map((amenity) => (
                         <span
                           key={amenity}
-                          className="text-xs px-2 py-1 rounded-full bg-forest-100 dark:bg-forest-800 text-forest-600 dark:text-forest-300"
+                          className="rooms-neu-chip text-xs px-2.5 py-1 rounded-full"
                         >
                           {amenity}
                         </span>
@@ -470,7 +403,7 @@ export default function Home() {
                         <span className="text-sm text-forest-600 dark:text-mist-400"> /night</span>
                       </div>
                       <Link href={`/rooms/${room.id}`}>
-                        <Button variant="outline" size="sm" className="text-forest-600 dark:text-forest-300">
+                        <Button variant="outline" size="sm" className="rooms-neu-button">
                           View Details
                           <ChevronRight className="w-4 h-4 ml-1" />
                         </Button>
@@ -484,7 +417,7 @@ export default function Home() {
 
           <div className="text-center mt-10">
             <Link href="/rooms">
-              <Button className="bg-forest-600 hover:bg-forest-700 text-white">
+              <Button className="rooms-neu-cta px-7 h-12 rounded-full">
                 View All Rooms
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
@@ -494,7 +427,8 @@ export default function Home() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-20 bg-white dark:bg-forest-900">
+      <section className="particle-scene rooms-neu-scene py-20">
+        <BackgroundParticles />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -502,7 +436,7 @@ export default function Home() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <Badge variant="secondary" className="mb-4">Why Choose Us</Badge>
+              <Badge variant="secondary" className="rooms-neu-chip mb-4">Why Choose Us</Badge>
               <h2 className="font-heading text-3xl sm:text-4xl font-bold text-forest-800 dark:text-white mb-6">
                 Your Perfect Hill Station Escape Awaits
               </h2>
@@ -517,9 +451,9 @@ export default function Home() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    className="flex gap-4"
+                    className="rooms-neu-panel flex gap-3 p-5"
                   >
-                    <div className="w-12 h-12 rounded-lg bg-forest-100 dark:bg-forest-800 flex items-center justify-center shrink-0">
+                    <div className="rooms-neu-chip w-11 h-11 rounded-xl flex items-center justify-center shrink-0">
                       <item.icon className="w-6 h-6 text-forest-600 dark:text-forest-400" />
                     </div>
                     <div>
@@ -539,14 +473,15 @@ export default function Home() {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="relative"
+              className="rooms-neu-panel relative p-3 mb-6"
             >
               <img
-                src={hotelOutlook.src}
+                src={whyChooseImage.src}
                 alt="Apple Valley"
-                className="rounded-2xl shadow-2xl"
+                loading="lazy"
+                className="w-full h-auto rounded-2xl"
               />
-              <div className="absolute -bottom-6 -left-6 bg-white dark:bg-forest-800 p-4 rounded-xl shadow-lg">
+              <div className="rooms-neu-panel absolute -bottom-6 left-6 p-4 rounded-xl">
                 <div className="flex items-center gap-2 mb-1">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star key={star} className="w-4 h-4 fill-walnut-400 text-walnut-400" />
@@ -561,7 +496,8 @@ export default function Home() {
       </section>
 
       {/* Nearby Attractions */}
-      <section id="attractions" className="py-20 bg-stone-50 dark:bg-forest-950 scroll-mt-24">
+      <section id="attractions" className="particle-scene rooms-neu-scene py-20 scroll-mt-24">
+        <BackgroundParticles />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -578,7 +514,7 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {attractions.map((attraction, index) => (
               <motion.div
                 key={attraction.name}
@@ -586,7 +522,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="group relative aspect-[4/5] rounded-xl overflow-hidden"
+                className="rooms-neu-panel neu-attraction-card group relative aspect-[4/5] overflow-hidden"
                 onTouchStart={(e) => {
                   if (attraction.name === 'Kodai Lake') {
                     setKodaiLakeTouchStart(e.touches[0].clientX);
@@ -832,7 +768,8 @@ export default function Home() {
       </section>
 
       {/* Packages */}
-      <section id="packages" className="py-20 bg-white dark:bg-forest-900 scroll-mt-24">
+      <section id="packages" className="particle-scene rooms-neu-scene py-20 scroll-mt-24">
+        <BackgroundParticles />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -840,7 +777,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <Badge variant="secondary" className="mb-4">Special Offers</Badge>
+            <Badge variant="secondary" className="rooms-neu-chip mb-4">Special Offers</Badge>
             <h2 className="font-heading text-3xl sm:text-4xl font-bold text-forest-800 dark:text-white mb-4">
               Exclusive Packages
             </h2>
@@ -849,7 +786,7 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {packages.map((pkg, index) => (
               <motion.div
                 key={pkg.name}
@@ -859,7 +796,7 @@ export default function Home() {
                 transition={{ delay: index * 0.1 }}
                 className="group"
               >
-                <Card className="overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                <Card className="room-card rooms-neu-panel h-full overflow-hidden transition-all duration-300">
                   <div className="relative h-48">
                     <img
                       src={pkg.image}
@@ -867,7 +804,7 @@ export default function Home() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <Badge className="absolute top-4 right-4 bg-green-600 text-white">
+                    <Badge className="rooms-neu-chip absolute top-4 right-4 px-3 py-1">
                       Save ₹{(pkg.originalPrice - pkg.price).toLocaleString()}
                     </Badge>
                   </div>
@@ -875,11 +812,11 @@ export default function Home() {
                     <h3 className="font-heading text-xl font-semibold text-forest-800 dark:text-white mb-2">
                       {pkg.name}
                     </h3>
-                    <div className="flex items-center gap-2 text-sm text-forest-600 dark:text-mist-400 mb-4">
+                    <div className="rooms-neu-chip inline-flex items-center gap-2 text-sm mb-5 rounded-full px-3 py-2">
                       <Clock className="w-4 h-4" />
                       <span>{pkg.nights} Nights</span>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-wrap gap-4 items-center justify-between">
                       <div>
                         <span className="text-sm text-forest-500 dark:text-mist-500 line-through">
                           ₹{pkg.originalPrice.toLocaleString()}
@@ -889,7 +826,7 @@ export default function Home() {
                         </div>
                       </div>
                       <Link href={`/packages/${pkg.name.toLowerCase().replace(/\s+/g, '-')}`}>
-                        <Button className="bg-walnut-600 hover:bg-walnut-700 text-white">
+                        <Button className="rooms-neu-button">
                           View Details
                         </Button>
                       </Link>
@@ -902,7 +839,7 @@ export default function Home() {
 
           <div className="text-center mt-10">
             <Link href="/packages">
-              <Button variant="outline" className="text-forest-600 dark:text-forest-300">
+              <Button variant="outline" className="rooms-neu-cta px-7 h-12">
                 View All Packages
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
@@ -911,8 +848,31 @@ export default function Home() {
         </div>
       </section>
 
+      <section id="dining" className="particle-scene rooms-neu-scene py-20 scroll-mt-24">
+        <BackgroundParticles />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card className="rooms-neu-panel overflow-hidden p-3">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+              <img src={restaurantImage.src} alt="Apple Valley in-house restaurant" loading="lazy" className="w-full h-72 sm:h-96 object-cover rounded-2xl" />
+              <CardContent className="p-6 sm:p-8">
+                <Badge className="rooms-neu-chip mb-4">Dining &amp; Add-ons</Badge>
+                <h2 className="font-heading text-3xl sm:text-4xl text-forest-800 dark:text-white mb-4">Good Food, Special Moments</h2>
+                <p className="text-forest-600 dark:text-mist-300 mb-6">Enjoy our in-house restaurant, candlelight dinners, and BBQ experiences. Add a campfire evening or celebration decorations to make your stay special.</p>
+                <div className="flex flex-wrap gap-3 mb-6">
+                  {['In-House Restaurant', 'Candlelight Dinner', 'BBQ', 'Campfire', '24/7 Room Service'].map((label) => (
+                    <span key={label} className="rooms-neu-chip text-sm rounded-full px-3 py-2">{label}</span>
+                  ))}
+                </div>
+                <Link href="/dining"><Button className="rooms-neu-button">View Dining &amp; Add-ons<ArrowRight className="w-4 h-4 ml-2" /></Button></Link>
+              </CardContent>
+            </div>
+          </Card>
+        </div>
+      </section>
+
       {/* Testimonials */}
-      <section id="reviews" className="py-20 bg-forest-50 dark:bg-forest-950 scroll-mt-24">
+      <section id="reviews" className="particle-scene rooms-neu-scene py-20 scroll-mt-24">
+        <BackgroundParticles />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -920,13 +880,13 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <Badge variant="secondary" className="mb-4">Guest Reviews</Badge>
+            <Badge variant="secondary" className="rooms-neu-chip mb-4">Guest Reviews</Badge>
             <h2 className="font-heading text-3xl sm:text-4xl font-bold text-forest-800 dark:text-white mb-4">
               What Our Guests Say
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
               <motion.div
                 key={testimonial.name}
@@ -935,9 +895,9 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="h-full">
-                  <CardContent className="p-6">
-                    <div className="flex gap-1 mb-4">
+                <Card className="rooms-neu-panel neu-review-card h-full">
+                  <CardContent className="p-6 sm:p-8 h-full flex flex-col">
+                    <div className="rooms-neu-chip self-start rounded-full px-3 py-2 flex gap-1 mb-5">
                       {Array.from({ length: testimonial.rating }).map((_, i) => (
                         <Star key={i} className="w-5 h-5 fill-walnut-400 text-walnut-400" />
                       ))}
@@ -945,7 +905,7 @@ export default function Home() {
                     <p className="text-forest-700 dark:text-mist-300 mb-6 italic">
                       &ldquo;{testimonial.text}&rdquo;
                     </p>
-                    <div>
+                    <div className="mt-auto">
                       <p className="font-semibold text-forest-800 dark:text-white">
                         {testimonial.name}
                       </p>
@@ -962,7 +922,8 @@ export default function Home() {
       </section>
 
       {/* Map & Contact */}
-      <section id="contact" className="py-20 bg-white dark:bg-forest-900 scroll-mt-24">
+      <section id="contact" className="particle-scene rooms-neu-scene py-20 scroll-mt-24">
+        <BackgroundParticles />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <motion.div
@@ -974,7 +935,7 @@ export default function Home() {
               <h2 className="font-heading text-3xl sm:text-4xl font-bold text-forest-800 dark:text-white mb-6">
                 Find Us in Kodaikanal
               </h2>
-              <div className="space-y-4 mb-8">
+              <div className="rooms-neu-panel p-6 space-y-5 mb-8">
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-walnut-600 mt-1 shrink-0" />
                   <div>
@@ -990,7 +951,7 @@ export default function Home() {
                 </div>
               </div>
               <Link href="/contact">
-                <Button className="bg-forest-600 hover:bg-forest-700 text-white">
+                <Button className="rooms-neu-button">
                   Get Directions
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
@@ -1001,9 +962,10 @@ export default function Home() {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="rounded-xl overflow-hidden shadow-lg"
+              className="rooms-neu-panel p-3 overflow-hidden self-start"
             >
               <iframe
+                className="rounded-2xl"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31443.9350629!2d77.46!3d10.23!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b07d5c7d5f5f5f5%3A0x5f5f5f5f5f5f5f5f!2sKodaikanal%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin"
                 width="100%"
                 height="350"

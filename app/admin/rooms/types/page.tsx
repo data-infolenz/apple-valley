@@ -21,6 +21,7 @@ interface RoomType {
   size: number;
   totalRooms: number;
   availableRooms: number;
+  amenities: string[];
   isActive: boolean;
 }
 
@@ -32,15 +33,18 @@ export default function AdminRoomTypesPage() {
     name: '',
     description: '',
     basePrice: '',
+    totalRooms: '1',
+    availableRooms: '1',
     maxOccupancy: '2',
     bedType: 'Queen',
     size: '200',
+    amenities: '',
   });
 
   const loadRoomTypes = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/rooms/types', { cache: 'no-store' });
+      const response = await fetch('/api/rooms/types?active=true', { cache: 'no-store' });
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.error || 'Unable to load room types');
       setRoomTypes(result.data);
@@ -53,7 +57,7 @@ export default function AdminRoomTypesPage() {
 
   const resetForm = () => {
     setEditingSlug(null);
-    setForm({ name: '', description: '', basePrice: '', maxOccupancy: '2', bedType: 'Queen', size: '200' });
+    setForm({ name: '', description: '', basePrice: '', totalRooms: '1', availableRooms: '1', maxOccupancy: '2', bedType: 'Queen', size: '200', amenities: '' });
   };
 
   const editRoomType = (roomType: RoomType) => {
@@ -62,9 +66,12 @@ export default function AdminRoomTypesPage() {
       name: roomType.name,
       description: roomType.description || roomType.shortDescription,
       basePrice: String(roomType.basePrice),
+      totalRooms: String(roomType.totalRooms),
+      availableRooms: String(roomType.availableRooms),
       maxOccupancy: String(roomType.maxOccupancy),
       bedType: roomType.bedType,
       size: String(roomType.size),
+      amenities: roomType.amenities.join('\n'),
     });
   };
 
@@ -82,8 +89,14 @@ export default function AdminRoomTypesPage() {
           ...form,
           slug: editingSlug || undefined,
           basePrice: Number(form.basePrice),
+          totalRooms: Number(form.totalRooms),
+          availableRooms: Number(form.availableRooms),
           maxOccupancy: Number(form.maxOccupancy),
           size: Number(form.size),
+          amenities: form.amenities
+            .split('\n')
+            .map((amenity) => amenity.trim())
+            .filter(Boolean),
           isActive: true,
         }),
       });
@@ -131,10 +144,23 @@ export default function AdminRoomTypesPage() {
               <div><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} required /></div>
               <div><Label>Base Price</Label><Input type="number" min="1" value={form.basePrice} onChange={(e) => setForm({ ...form, basePrice: e.target.value })} required /></div>
               <div className="grid grid-cols-2 gap-3">
+                <div><Label>Total Rooms</Label><Input type="number" min="0" value={form.totalRooms} onChange={(e) => setForm({ ...form, totalRooms: e.target.value })} /></div>
+                <div><Label>Available</Label><Input type="number" min="0" value={form.availableRooms} onChange={(e) => setForm({ ...form, availableRooms: e.target.value })} /></div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
                 <div><Label>Occupancy</Label><Input type="number" min="1" value={form.maxOccupancy} onChange={(e) => setForm({ ...form, maxOccupancy: e.target.value })} /></div>
                 <div><Label>Size sq.ft</Label><Input type="number" min="1" value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} /></div>
               </div>
               <div><Label>Bed Type</Label><Input value={form.bedType} onChange={(e) => setForm({ ...form, bedType: e.target.value })} /></div>
+              <div>
+                <Label>Amenities</Label>
+                <Textarea
+                  value={form.amenities}
+                  onChange={(e) => setForm({ ...form, amenities: e.target.value })}
+                  placeholder="One amenity per line"
+                  rows={7}
+                />
+              </div>
               <Button className="w-full bg-forest-600 hover:bg-forest-700 text-white">
                 {editingSlug ? 'Update Room Type' : 'Save Room Type'}
               </Button>
@@ -164,6 +190,17 @@ export default function AdminRoomTypesPage() {
                   <div><p className="text-forest-500">Rooms</p><p className="font-semibold">{roomType.availableRooms}/{roomType.totalRooms} available</p></div>
                   <div><p className="text-forest-500">Bed</p><p className="font-semibold">{roomType.bedType}</p></div>
                   <div><p className="text-forest-500">Size</p><p className="font-semibold">{roomType.size} sq.ft</p></div>
+                </div>
+                <div>
+                  <p className="text-forest-500 mb-2">Amenities</p>
+                  <div className="flex flex-wrap gap-2">
+                    {roomType.amenities.slice(0, 8).map((amenity) => (
+                      <Badge key={amenity} variant="secondary">{amenity}</Badge>
+                    ))}
+                    {roomType.amenities.length > 8 && (
+                      <Badge variant="outline">+{roomType.amenities.length - 8} more</Badge>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>

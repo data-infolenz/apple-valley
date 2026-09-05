@@ -51,11 +51,11 @@ type RoomTypeOption = {
 };
 
 const fallbackRoomTypes: RoomTypeOption[] = [
-  { id: 'budget-standard', name: 'Budget Standard Room', price: 2000, maxOccupancy: 2, size: 180 },
-  { id: 'deluxe-hill-view', name: 'Deluxe Hill View Room', price: 3500, maxOccupancy: 2, size: 280 },
-  { id: 'premium-balcony', name: 'Premium Balcony Room', price: 4500, maxOccupancy: 2, size: 320 },
-  { id: 'family-cottage', name: 'Family Cottage', price: 6000, maxOccupancy: 4, size: 450 },
+  { id: 'deluxe', name: 'Deluxe', price: 3500, maxOccupancy: 2, size: 280 },
+  { id: 'super-deluxe', name: 'Super Deluxe', price: 4500, maxOccupancy: 2, size: 320 },
+  { id: 'triple-deluxe', name: 'Triple Deluxe', price: 5200, maxOccupancy: 3, size: 360 },
   { id: 'honeymoon-suite', name: 'Honeymoon Suite', price: 7500, maxOccupancy: 2, size: 400 },
+  { id: 'family-suite', name: 'Family Suite', price: 6800, maxOccupancy: 4, size: 450 },
 ];
 
 const addOns = [

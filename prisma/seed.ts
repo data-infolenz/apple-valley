@@ -37,11 +37,11 @@ function slugify(value: string) {
 
 function roomNumbersFor(slug: string) {
   const numbers: Record<string, string[]> = {
-    "standard-kodai-comfort": ["101", "102", "103", "104", "105", "106"],
-    "deluxe-kodai-valley": ["201", "202", "203", "204", "205", "206", "207", "208"],
-    "premium-mist-balcony": ["301", "302", "303", "304", "305", "306"],
-    "tamil-nadu-family-cottage": ["401", "402", "403", "404"],
-    "kurinji-honeymoon-suite": ["501", "502", "503"],
+    deluxe: ["101", "102", "103", "104", "105", "106"],
+    "super-deluxe": ["201", "202", "203", "204", "205", "206"],
+    "triple-deluxe": ["301", "302", "303", "304"],
+    "honeymoon-suite": ["401", "402", "403"],
+    "family-suite": ["501", "502", "503", "504"],
   };
 
   return numbers[slug] || [];
@@ -49,6 +49,7 @@ function roomNumbersFor(slug: string) {
 
 async function seedHotelData() {
   const desiredRoomNumbers = new Set(ROOM_CATEGORIES.flatMap((roomType) => roomNumbersFor(roomType.id)));
+  const desiredRoomTypeSlugs = ROOM_CATEGORIES.map((roomType) => roomType.id);
 
   for (const [index, roomType] of ROOM_CATEGORIES.entries()) {
     const savedRoomType = await prisma.roomType.upsert({
@@ -64,7 +65,7 @@ async function seedHotelData() {
         featured: index < 3,
         isActive: true,
         order: index + 1,
-        amenities: encodeJsonField(DEFAULT_AMENITIES),
+        amenities: encodeJsonField(roomType.amenities || DEFAULT_AMENITIES),
       },
       create: {
         slug: roomType.id,
@@ -72,7 +73,7 @@ async function seedHotelData() {
         description: roomType.description,
         shortDescription: roomType.description,
         images: encodeJsonField([]),
-        amenities: encodeJsonField(DEFAULT_AMENITIES),
+        amenities: encodeJsonField(roomType.amenities || DEFAULT_AMENITIES),
         basePrice: roomType.basePrice,
         maxOccupancy: roomType.maxOccupancy,
         bedType: roomType.bedType,
@@ -101,6 +102,17 @@ async function seedHotelData() {
       });
     }
   }
+
+  await prisma.roomType.updateMany({
+    where: {
+      slug: {
+        notIn: desiredRoomTypeSlugs,
+      },
+    },
+    data: {
+      isActive: false,
+    },
+  });
 
   await prisma.room.deleteMany({
     where: {

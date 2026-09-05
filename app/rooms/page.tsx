@@ -11,13 +11,20 @@ import {
   Coffee,
   Tv,
   Mountain,
-  Wind,
+  Thermometer,
+  Droplets,
+  Refrigerator,
+  Armchair,
   ArrowRight,
   Filter,
   Check,
 } from 'lucide-react';
 import Header from '@/components/public/Header';
+import BackgroundParticles from '@/components/public/BackgroundParticles';
 import Footer from '@/components/public/Footer';
+import RoomSlideshow from '@/components/public/RoomSlideshow';
+import { roomImages } from '@/lib/room-images';
+import { getRoomAmenities } from '@/lib/room-amenities';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -29,10 +36,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import premiumBalconyRoom from '@/components/public/src/img/room pic 1.webp';
-import honeymoonSuiteRoom from '@/components/public/src/img/room pic 2.jpg';
-import familyCottageRoom from '@/components/public/src/img/room pic 3.jpg';
-import budgetStandardRoom from '@/components/public/src/img/Budget Standard Room.jpg';
 import overviewImage from '@/components/public/src/img/overview.jpg';
 import {
   Dialog,
@@ -45,110 +48,91 @@ import {
 
 const allRooms = [
   {
-    id: 'deluxe-hill-view',
-    name: 'Deluxe Hill View Room',
-    slug: 'deluxe-hill-view',
-    description: 'Wake up to panoramic views of the misty hills. Our Deluxe Hill View rooms offer a perfect blend of comfort and natural beauty. Each room features modern amenities and traditional hill-station charm.',
-    shortDescription: 'Panoramic misty hill views with modern comfort',
+    id: 'deluxe',
+    name: 'Deluxe',
+    slug: 'deluxe',
+    description: 'Comfortable deluxe room for couples and short stays with essential Apple Valley amenities.',
+    shortDescription: 'Comfortable room with essential amenities',
     price: 3500,
     size: 280,
     maxOccupancy: 2,
-    bedType: 'King Size',
-    images: [
-      'https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg',
-      'https://images.pexels.com/261102/pexels-photo-261102.jpeg',
-      'https://images.pexels.com/271624/pexels-photo-271624.jpeg',
-    ],
-    amenities: ['Hill View', 'Room Heater', 'Hot Water', 'WiFi', 'TV with Cable', 'Tea/Coffee Maker', 'Private Bathroom', 'Toiletries', 'Hair Dryer'],
+    bedType: 'Queen Size',
+    images: roomImages['deluxe'],
+    amenities: getRoomAmenities('deluxe'),
     featured: false,
     badge: 'Best Value',
   },
   {
-    id: 'premium-balcony',
-    name: 'Premium Balcony Room',
-    slug: 'premium-balcony',
-    description: 'Step out to your private balcony facing the valley. Watch the mist roll in during mornings and enjoy spectacular sunsets. Our Premium Balcony rooms offer an elevated experience with premium furnishing and personalized service.',
-    shortDescription: 'Private valley-view balcony with premium amenities',
+    id: 'super-deluxe',
+    name: 'Super Deluxe',
+    slug: 'super-deluxe',
+    description: 'Larger premium room with upgraded comfort for guests who want more space.',
+    shortDescription: 'Larger premium room with upgraded comfort',
     price: 4500,
     size: 320,
     maxOccupancy: 2,
     bedType: 'King Size',
-    images: [
-      premiumBalconyRoom.src,
-      'https://images.pexels.com/1648776/pexels-photo-1648776.jpeg',
-      'https://images.pexels.com/261102/pexels-photo-261102.jpeg',
-    ],
-    amenities: ['Balcony', 'Lake View', 'Mountain View', 'Room Heater', 'Hot Water', 'WiFi', 'TV with Cable', 'Mini Bar', 'Tea/Coffee Maker', 'Seating Area', 'Private Bathroom', 'Hair Dryer'],
+    images: roomImages['super-deluxe'],
+    amenities: getRoomAmenities('super-deluxe'),
     featured: true,
-    badge: 'Most Popular',
+    badge: 'Popular',
   },
   {
-    id: 'family-cottage',
-    name: 'Family Cottage',
-    slug: 'family-cottage',
-    description: 'Spacious wooden cottage perfect for families. These standalone cottages feature separate living and sleeping areas, a kitchen, and a private garden. Ideal for families seeking privacy and comfort.',
-    shortDescription: 'Spacious wooden cottage with garden and kitchen',
-    price: 6000,
-    size: 450,
-    maxOccupancy: 4,
-    bedType: '2 Double Beds',
-    images: [
-      familyCottageRoom.src,
-      'https://images.pexels.com/photos/1001965/pexels-photo-1001965.jpeg',
-      'https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg',
-    ],
-    amenities: ['Mountain View', 'Private Garden', 'Kitchen', 'Living Area', 'Room Heater', 'Hot Water', 'WiFi', 'TV', 'Sofa Bed', 'Private Bathroom', 'Kids-friendly', 'Parking'],
+    id: 'triple-deluxe',
+    name: 'Triple Deluxe',
+    slug: 'triple-deluxe',
+    description: 'Deluxe room prepared for three guests, ideal for small families and groups.',
+    shortDescription: 'Deluxe room prepared for three guests',
+    price: 5200,
+    size: 360,
+    maxOccupancy: 3,
+    bedType: 'Queen + Single',
+    images: roomImages['triple-deluxe'],
+    amenities: getRoomAmenities('triple-deluxe'),
     featured: true,
-    badge: 'Family Favorite',
+    badge: 'Triple Stay',
   },
   {
     id: 'honeymoon-suite',
     name: 'Honeymoon Suite',
     slug: 'honeymoon-suite',
-    description: 'Begin your forever in the lap of misty hills. Our Honeymoon Suite features a king-size bed with premium linens, romantic rose decorations, a fireplace, and lake views. Perfect for couples seeking a magical experience.',
-    shortDescription: 'Romantic suite with fireplace, lake views, and butler service',
+    description: 'A romantic suite for couples with a king-size bed, balcony view, and sitting area. Enjoy all our standard room amenities plus a refrigerator and coffee maker.',
+    shortDescription: 'Romantic suite with a refrigerator and coffee maker',
     price: 7500,
     size: 400,
     maxOccupancy: 2,
     bedType: 'King Size',
-    images: [
-      honeymoonSuiteRoom.src,
-      'https://images.pexels.com/photos/1024608/pexels-photo-1024608.jpeg',
-      'https://images.pexels.com/photos/1648776/pexels-photo-1648776.jpeg',
-    ],
-    amenities: ['Lake View', 'Fireplace', 'Jacuzzi', 'Room Heater', 'Hot Water', 'WiFi', 'TV', 'Mini Bar', 'Butler Service', 'Rose Decoration', 'Chocolate Hamper', 'Work Desk', 'Private Bathroom'],
+    images: roomImages['honeymoon-suite'],
+    amenities: getRoomAmenities('honeymoon-suite'),
     featured: true,
     badge: 'Premium',
   },
   {
-    id: 'budget-standard',
-    name: 'Budget Standard Room',
-    slug: 'budget-standard',
-    description: 'Comfortable and affordable hill-station stay without compromising on essential amenities. Perfect for solo travelers, students, and budget-conscious tourists exploring the beauty of Kodaikanal.',
-    shortDescription: 'Affordable comfort with essential amenities',
-    price: 2000,
-    size: 180,
-    maxOccupancy: 2,
-    bedType: 'Queen Size',
-    images: [
-      budgetStandardRoom.src,
-      'https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg',
-    ],
-    amenities: ['Room Heater', 'Hot Water', 'WiFi', 'TV', 'Tea/Coffee Maker', 'Private Bathroom', 'Toiletries'],
+    id: 'family-suite',
+    name: 'Family Suite',
+    slug: 'family-suite',
+    description: 'Spacious family suite for guests traveling with children or a larger group.',
+    shortDescription: 'Spacious suite for families and groups',
+    price: 6800,
+    size: 450,
+    maxOccupancy: 4,
+    bedType: '2 Double Beds',
+    images: roomImages['family-suite'],
+    amenities: getRoomAmenities('family-suite'),
     featured: false,
-    badge: 'Budget Pick',
+    badge: 'Family Stay',
   },
 ];
 
 const amenityIcons: Record<string, React.ReactNode> = {
-  'Hill View': <Mountain className="w-4 h-4" />,
-  'Lake View': <Mountain className="w-4 h-4" />,
-  'Mountain View': <Mountain className="w-4 h-4" />,
-  'WiFi': <Wifi className="w-4 h-4" />,
-  'Room Heater': <Wind className="w-4 h-4" />,
-  'Tea/Coffee Maker': <Coffee className="w-4 h-4" />,
   'TV': <Tv className="w-4 h-4" />,
-  'TV with Cable': <Tv className="w-4 h-4" />,
+  'WiFi': <Wifi className="w-4 h-4" />,
+  'Water Heater': <Thermometer className="w-4 h-4" />,
+  'Water Dispenser': <Droplets className="w-4 h-4" />,
+  'Balcony View': <Mountain className="w-4 h-4" />,
+  'Sitting Area': <Armchair className="w-4 h-4" />,
+  'Refrigerator': <Refrigerator className="w-4 h-4" />,
+  'Coffee Maker': <Coffee className="w-4 h-4" />,
 };
 
 export default function RoomsPage() {
@@ -171,7 +155,7 @@ export default function RoomsPage() {
           />
           <div className="absolute inset-0 bg-black/50" />
         </div>
-        <div className="relative z-10 text-center text-white px-4">
+        <div className="rooms-neu-hero relative z-10 text-center text-white mx-4 px-6 py-8 sm:px-12 sm:py-10">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -191,7 +175,8 @@ export default function RoomsPage() {
       </section>
 
       {/* Main Content */}
-      <section className="py-12 px-4">
+      <section className="particle-scene rooms-neu-scene rooms-neu-listing py-12 sm:py-16 px-4">
+        <BackgroundParticles />
         <div className="max-w-7xl mx-auto">
           <div>
             {/* Filters Sidebar */}
@@ -265,13 +250,13 @@ export default function RoomsPage() {
 
             {/* Room Listings */}
             <div>
-              <div className="flex items-center justify-between mb-6">
-                <p className="text-forest-600 dark:text-mist-400">
+              <div className="flex items-center justify-between mb-8">
+                <p className="rooms-neu-chip rounded-full px-4 py-2 text-sm">
                   Showing {filteredRooms.length} rooms
                 </p>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-10">
                 {filteredRooms.map((room, index) => (
                   <motion.div
                     key={room.id}
@@ -279,15 +264,11 @@ export default function RoomsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <Card className="overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <Card className="room-card rooms-neu-panel overflow-hidden transition-all duration-300">
                       <div className="grid grid-cols-1 md:grid-cols-3">
                         {/* Image */}
                         <div className="relative h-64 md:h-full">
-                          <img
-                            src={room.images[0]}
-                            alt={room.name}
-                            className="w-full h-full object-cover"
-                          />
+                          <RoomSlideshow images={room.images} name={room.name} />
                           {room.badge && (
                             <Badge className="absolute top-4 left-4 bg-walnut-600 text-white">
                               {room.badge}
@@ -296,7 +277,7 @@ export default function RoomsPage() {
                         </div>
 
                         {/* Details */}
-                        <CardContent className="md:col-span-2 p-6">
+                        <CardContent className="md:col-span-2 p-6 sm:p-8">
                           <div className="flex flex-col h-full">
                             <div className="flex-1">
                               <h3 className="font-heading text-2xl font-semibold text-forest-800 dark:text-white mb-2">
@@ -307,7 +288,7 @@ export default function RoomsPage() {
                               </p>
 
                               {/* Quick Info */}
-                              <div className="flex flex-wrap gap-4 mb-4">
+                              <div className="rooms-neu-facts flex flex-wrap gap-4 mb-5 p-4 rounded-2xl">
                                 <div className="flex items-center gap-1 text-sm text-forest-600 dark:text-mist-400">
                                   <Maximize className="w-4 h-4" />
                                   <span>{room.size} sq ft</span>
@@ -324,25 +305,20 @@ export default function RoomsPage() {
 
                               {/* Amenities */}
                               <div className="flex flex-wrap gap-2 mb-4">
-                                {room.amenities.slice(0, 6).map((amenity) => (
+                                {room.amenities.map((amenity) => (
                                   <span
                                     key={amenity}
-                                    className="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-forest-100 dark:bg-forest-800 text-forest-600 dark:text-forest-300"
+                                    className="flex items-center gap-1 text-xs px-2 py-1 rounded-full rooms-neu-chip"
                                   >
                                     {amenityIcons[amenity] || <Check className="w-3 h-3" />}
                                     {amenity}
                                   </span>
                                 ))}
-                                {room.amenities.length > 6 && (
-                                  <span className="text-xs px-2 py-1 text-forest-500 dark:text-mist-400">
-                                    +{room.amenities.length - 6} more
-                                  </span>
-                                )}
                               </div>
                             </div>
 
                             {/* Price & CTA */}
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-t border-forest-100 dark:border-forest-800">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-5 rooms-neu-price-row">
                               <div>
                                 <div className="text-2xl font-bold text-forest-800 dark:text-white">
                                   ₹{room.price.toLocaleString()}
@@ -356,12 +332,12 @@ export default function RoomsPage() {
                                   <DialogTrigger asChild>
                                     <Button
                                       variant="outline"
-                                      className="text-forest-600 dark:text-forest-300"
+                                      className="rooms-neu-button"
                                     >
                                       View Details
                                     </Button>
                                   </DialogTrigger>
-                                  <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                                  <DialogContent className="rooms-neu-panel rooms-neu-dialog max-w-2xl max-h-[90vh] overflow-y-auto">
                                     <DialogHeader>
                                       <DialogTitle className="text-2xl font-heading">
                                         {room.name}
@@ -404,7 +380,7 @@ export default function RoomsPage() {
                                           {room.amenities.map((amenity) => (
                                             <span
                                               key={amenity}
-                                              className="text-xs px-2 py-1 rounded-full bg-forest-100 dark:bg-forest-800 text-forest-600 dark:text-forest-300"
+                                              className="text-xs px-2 py-1 rounded-full rooms-neu-chip"
                                             >
                                               {amenity}
                                             </span>
@@ -417,7 +393,7 @@ export default function RoomsPage() {
                                           <span className="text-forest-500"> /night</span>
                                         </div>
                                         <Link href={`/booking?roomType=${room.slug}`}>
-                                          <Button className="bg-walnut-600 hover:bg-walnut-700">
+                                          <Button className="rooms-neu-button rooms-neu-book">
                                             Book Now
                                           </Button>
                                         </Link>
@@ -426,7 +402,7 @@ export default function RoomsPage() {
                                   </DialogContent>
                                 </Dialog>
                                 <Link href={`/booking?roomType=${room.slug}`}>
-                                  <Button className="bg-walnut-600 hover:bg-walnut-700 text-white">
+                                  <Button className="rooms-neu-button rooms-neu-book">
                                     Book Now
                                     <ArrowRight className="w-4 h-4 ml-2" />
                                   </Button>

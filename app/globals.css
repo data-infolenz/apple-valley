@@ -8,8 +8,8 @@ html {
 
 @layer base {
   :root {
-    --font-inter: Arial, Helvetica, sans-serif;
-    --font-playfair: Georgia, 'Times New Roman', serif;
+    --font-inter: "Trebuchet MS", "Segoe UI", sans-serif;
+    --font-playfair: "Palatino Linotype", "Book Antiqua", Palatino, serif;
 
     /* Apple Valley - Light Theme */
     --background: 40 30% 98%;
@@ -152,11 +152,6 @@ html {
     @apply relative before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/60 before:via-black/20 before:to-transparent before:z-10;
   }
 
-  /* Booking Panel */
-  .booking-panel {
-    @apply bg-stone-50/95 dark:bg-forest-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-forest-200 dark:border-mist-700;
-  }
-
   /* Status Badges */
   .badge-confirmed {
     @apply bg-forest-100 text-forest-700 dark:bg-forest-900/50 dark:text-forest-300;
@@ -256,4 +251,184 @@ html {
 
 .dark ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--foreground));
+}
+
+/* Sparse drifting particles in the open space behind each section. */
+.particle-scene { position: relative; isolation: isolate; }
+.background-particles {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.background-particles span {
+  position: absolute;
+  border-radius: 50%;
+  background: #53775c;
+  animation: quiet-particle-drift 24s ease-in-out infinite;
+}
+.dark .background-particles span { background: #bdcda8; }
+.background-circle {
+  position: absolute;
+  width: clamp(140px, 20vw, 280px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgb(83 119 92 / .24);
+  background: radial-gradient(circle at 30% 25%, rgb(255 255 255 / .12), rgb(83 119 92 / .035) 70%);
+  box-shadow: inset 2px 2px 12px rgb(255 255 255 / .08), 5px 8px 22px rgb(20 32 25 / .04);
+  animation: background-circle-float 20s ease-in-out infinite alternate;
+}
+.background-circle-left { left: -70px; top: 16%; }
+.background-circle-right { right: -80px; bottom: 12%; animation-duration: 26s; animation-delay: -9s; }
+.background-circle-small { width: 90px; right: 14%; top: 5%; animation-duration: 23s; animation-delay: -14s; }
+.dark .background-circle {
+  border-color: rgb(184 209 188 / .18);
+  background: radial-gradient(circle at 30% 25%, rgb(184 209 188 / .075), transparent 70%);
+}
+@keyframes background-circle-float {
+  from { transform: translate3d(0, 14px, 0) scale(.94); }
+  to { transform: translate3d(22px, -26px, 0) scale(1.06); }
+}
+@keyframes quiet-particle-drift {
+  0%, 100% { transform: translate3d(0, 16px, 0); opacity: .12; }
+  35% { transform: translate3d(18px, -20px, 0); opacity: .42; }
+  70% { transform: translate3d(-12px, -48px, 0); opacity: .22; }
+}
+@media (max-width: 640px) {
+  .background-particles span:nth-child(even) { display: none; }
+  .background-circle { opacity: .6; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .background-particles span { animation: none; opacity: .2; }
+  .background-circle { animation: none; }
+}
+
+/* Soft, sculpted room surfaces. */
+:root {
+  --room-surface: #e7ede8;
+  --room-shadow: #c3cec5;
+  --room-highlight: #ffffff;
+  --room-ink: #2a4332;
+  --room-muted: #496452;
+}
+.dark {
+  --room-surface: #23352c;
+  --room-shadow: #142019;
+  --room-highlight: #324a3e;
+  --room-ink: #f0f5f1;
+  --room-muted: #b8d1bc;
+}
+.rooms-neu-scene {
+  background: var(--room-surface);
+  position: relative;
+  isolation: isolate;
+}
+.rooms-neu-panel {
+  background: var(--room-surface);
+  color: var(--room-ink);
+  border: 1px solid transparent;
+  border-radius: 26px;
+  box-shadow: 12px 12px 28px var(--room-shadow), -12px -12px 28px var(--room-highlight);
+}
+.rooms-neu-panel.room-card { padding: 10px; }
+.neu-attraction-card { border: 8px solid var(--room-surface); }
+.neu-review-card { transition: box-shadow .3s; }
+.neu-review-card:hover {
+  box-shadow: 16px 16px 34px var(--room-shadow), -16px -16px 34px var(--room-highlight);
+}
+@media (prefers-reduced-motion: reduce) {
+  .neu-review-card { transition: none; }
+}
+.rooms-neu-panel.room-card:hover {
+  box-shadow: 16px 16px 34px var(--room-shadow), -16px -16px 34px var(--room-highlight);
+}
+.rooms-neu-panel.room-card > .relative,
+.rooms-neu-panel.room-card > .grid > .relative {
+  border-radius: 18px;
+  overflow: hidden;
+}
+.rooms-neu-chip {
+  color: var(--room-muted);
+  border: 1px solid transparent;
+  background: var(--room-surface);
+  box-shadow: inset 3px 3px 6px var(--room-shadow), inset -3px -3px 6px var(--room-highlight);
+}
+.rooms-neu-button, .rooms-neu-cta {
+  color: var(--room-ink);
+  border: 1px solid transparent;
+  background: var(--room-surface);
+  border-radius: 12px;
+  box-shadow: 5px 5px 10px var(--room-shadow), -5px -5px 10px var(--room-highlight);
+  transition: box-shadow .2s, color .2s;
+}
+.rooms-neu-cta { border-radius: 999px; }
+.rooms-neu-button:hover, .rooms-neu-cta:hover {
+  color: var(--room-ink);
+  background: var(--room-surface);
+  box-shadow: 2px 2px 5px var(--room-shadow), -2px -2px 5px var(--room-highlight);
+}
+.rooms-neu-button:active, .rooms-neu-cta:active {
+  box-shadow: inset 4px 4px 8px var(--room-shadow), inset -4px -4px 8px var(--room-highlight);
+}
+.rooms-neu-button:focus-visible, .rooms-neu-cta:focus-visible {
+  outline: 2px solid var(--room-muted);
+  outline-offset: 4px;
+}
+.rooms-neu-hero {
+  color: var(--room-ink);
+  background: var(--room-surface);
+  border-radius: 28px;
+  border: 1px solid transparent;
+  box-shadow: 12px 12px 30px rgb(0 0 0 / .3), inset 2px 2px 4px var(--room-highlight), inset -2px -2px 4px var(--room-shadow);
+}
+.rooms-neu-hero p { color: var(--room-muted); }
+.rooms-neu-dialog {
+  box-shadow: 16px 16px 48px rgb(0 0 0 / .3), inset 2px 2px 4px var(--room-highlight);
+}
+.rooms-neu-listing .room-card {
+  padding: 14px;
+  border-radius: 30px;
+  box-shadow: 14px 14px 30px var(--room-shadow), -14px -14px 30px var(--room-highlight);
+}
+.rooms-neu-listing .room-card > .grid > .relative {
+  border: 3px solid var(--room-surface);
+  box-shadow: 4px 4px 10px var(--room-shadow), -4px -4px 10px var(--room-highlight);
+}
+.rooms-neu-facts {
+  background: var(--room-surface);
+  box-shadow: inset 4px 4px 9px var(--room-shadow), inset -4px -4px 9px var(--room-highlight);
+}
+.rooms-neu-price-row {
+  border-top: 1px solid var(--room-shadow);
+}
+.rooms-neu-book {
+  font-weight: 600;
+  padding-inline: 24px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rooms-neu-button, .rooms-neu-cta { transition: none; }
+}
+
+/* Resort typography and entrance effects */
+.hero-title { letter-spacing: -0.045em; text-wrap: balance; }
+.hero-line { display: block; animation: resort-reveal 1s cubic-bezier(.22,1,.36,1) both; }
+.hero-line-delay { animation-delay: .18s; }
+.hero-title em { font-weight: 400; }
+.hero-eyebrow { letter-spacing: .12em; text-transform: uppercase; animation: resort-reveal .8s both; }
+.hero-description { animation: resort-reveal 1s .35s both; max-width: 38rem; }
+.hero-actions { animation: resort-reveal 1s .5s both; }
+.hero-actions button { transition: transform .3s, box-shadow .3s, background-color .3s; }
+.hero-actions button:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgb(0 0 0 / .18); }
+.room-card:hover { transform: translateY(-6px); }
+@keyframes resort-reveal {
+  from { opacity: 0; transform: translateY(24px); filter: blur(5px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .hero-line, .hero-eyebrow, .hero-description, .hero-actions { animation: none; }
+  .room-card:hover, .hero-actions button:hover { transform: none; }
+  .room-card, .hero-actions button { transition: none; }
 }

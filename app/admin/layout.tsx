@@ -1,19 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  LayoutDashboard,
   Calendar,
   BedDouble,
-  Package,
-  MapPin,
-  CreditCard,
-  Tag,
-  Settings,
-  Star,
-  ShieldCheck,
   Clock,
   Menu,
   X,
@@ -28,8 +20,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { toast } from 'sonner';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,8 +33,6 @@ import {
 import { useAuthStore } from '@/stores/auth-store';
 
 const sidebarItems = [
-  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Bookings', href: '/admin/bookings', icon: Calendar },
   {
     name: 'Rooms',
     icon: BedDouble,
@@ -52,30 +42,11 @@ const sidebarItems = [
       { name: 'Seasonal Pricing', href: '/admin/rooms/pricing' },
     ],
   },
-  {
-    name: 'Packages',
-    icon: Package,
-    children: [
-      { name: 'All Packages', href: '/admin/packages' },
-      { name: 'Create Package', href: '/admin/packages/create' },
-    ],
-  },
-  { name: 'Attractions', href: '/admin/attractions', icon: MapPin },
-  {
-    name: 'Operations',
-    icon: Settings,
-    children: [
-      { name: 'Check-in/Out', href: '/admin/operations/checkin' },
-      { name: 'Housekeeping', href: '/admin/operations/housekeeping' },
-      { name: 'Add-on Orders', href: '/admin/operations/addons' },
-    ],
-  },
-  { name: 'Payments', href: '/admin/payments', icon: CreditCard },
-  { name: 'Coupons', href: '/admin/coupons', icon: Tag },
-  { name: 'Reviews', href: '/admin/reviews', icon: Star },
-  { name: 'ID Verification', href: '/admin/verification', icon: ShieldCheck },
+  { name: 'Bookings', href: '/admin/bookings', icon: Calendar },
   { name: 'Reports', href: '/admin/reports', icon: Clock },
 ];
+
+const READ_NOTIFICATION_KEY = 'apple-valley-read-booking-notification';
 
 interface NotificationBooking {
   bookingId: string;
@@ -95,13 +66,15 @@ export default function AdminLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const [expandedItems, setExpandedItems] = useState<string[]>(['Rooms', 'Packages']);
+  const [expandedItems, setExpandedItems] = useState<string[]>(['Rooms']);
   const pathname = usePathname();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const logout = useAuthStore((state) => state.logout);
   const [mounted, setMounted] = useState(false);
   const [latestBookings, setLatestBookings] = useState<NotificationBooking[]>([]);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+  const latestBookingIdRef = useRef<string | null>(null);
   const isLoginPage = pathname === '/admin/login';
 
   useEffect(() => {
@@ -111,6 +84,27 @@ export default function AdminLayout({
   useEffect(() => {
     if (isLoginPage) return;
 
+    const playNewBookingAlert = () => {
+      const AudioContextClass = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioContextClass) return;
+
+      const audioContext = new AudioContextClass();
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(660, audioContext.currentTime + 0.14);
+      gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.18, audioContext.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.45);
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.48);
+      window.setTimeout(() => audioContext.close(), 600);
+    };
+
     const loadLatestBookings = async () => {
       try {
         const response = await fetch('/api/bookings?limit=5&status=all', {
@@ -119,7 +113,22 @@ export default function AdminLayout({
         const result = await response.json();
 
         if (response.ok && result.success) {
-          setLatestBookings(result.data);
+          const bookings = result.data as NotificationBooking[];
+          const newestBooking = bookings[0];
+
+          if (!latestBookingIdRef.current && newestBooking) {
+            latestBookingIdRef.current = newestBooking.bookingId;
+            setHasUnreadNotifications(window.localStorage.getItem(READ_NOTIFICATION_KEY) !== newestBooking.bookingId);
+          } else if (newestBooking && latestBookingIdRef.current !== newestBooking.bookingId) {
+            latestBookingIdRef.current = newestBooking.bookingId;
+            setHasUnreadNotifications(true);
+            playNewBookingAlert();
+            toast.success('New booking received', {
+              description: `${newestBooking.bookingId} - ${newestBooking.guestSnapshot.name}`,
+            });
+          }
+
+          setLatestBookings(bookings);
         }
       } catch {
         setLatestBookings([]);
@@ -135,6 +144,15 @@ export default function AdminLayout({
     setExpandedItems(prev =>
       prev.includes(name) ? prev.filter(i => i !== name) : [...prev, name]
     );
+  };
+
+  const markNotificationsRead = () => {
+    const newestBookingId = latestBookings[0]?.bookingId;
+
+    setHasUnreadNotifications(false);
+    if (newestBookingId) {
+      window.localStorage.setItem(READ_NOTIFICATION_KEY, newestBookingId);
+    }
   };
 
   const handleLogout = async () => {
@@ -363,11 +381,11 @@ export default function AdminLayout({
               </button>
             )}
 
-            <DropdownMenu>
+            <DropdownMenu onOpenChange={(open) => open && markNotificationsRead()}>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative p-2">
                   <Bell className="w-5 h-5 text-forest-600 dark:text-mist-400" />
-                  {latestBookings.length > 0 && (
+                  {hasUnreadNotifications && (
                     <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
                   )}
                 </Button>
@@ -393,7 +411,10 @@ export default function AdminLayout({
                   ))
                 )}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-center text-forest-600" onClick={() => router.push('/admin/bookings')}>
+                <DropdownMenuItem className="text-center text-forest-600" onClick={() => {
+                  markNotificationsRead();
+                  router.push('/admin/bookings');
+                }}>
                   View all notifications
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -413,10 +434,7 @@ export default function AdminLayout({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile Settings</DropdownMenuItem>
-                <DropdownMenuItem>Hotel Settings</DropdownMenuItem>
+                <DropdownMenuLabel>Admin</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600">
                   <LogOut className="w-4 h-4 mr-2" />

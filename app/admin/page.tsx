@@ -63,7 +63,7 @@ const recentBookings = [
   {
     id: 'AV-ABC123',
     guest: 'Priya Sharma',
-    room: 'Premium Balcony',
+    room: 'Super Deluxe',
     checkIn: '2024-01-15',
     status: 'confirmed',
     amount: 12400,
@@ -71,7 +71,7 @@ const recentBookings = [
   {
     id: 'AV-DEF456',
     guest: 'Rahul Menon',
-    room: 'Family Cottage',
+    room: 'Family Suite',
     checkIn: '2024-01-15',
     status: 'checked_in',
     amount: 22800,
@@ -87,7 +87,7 @@ const recentBookings = [
   {
     id: 'AV-JKL012',
     guest: 'Suresh Kumar',
-    room: 'Deluxe Hill View',
+    room: 'Deluxe',
     checkIn: '2024-01-16',
     status: 'confirmed',
     amount: 8400,
@@ -116,11 +116,11 @@ const fallbackAddOnSales = [
 ];
 
 const roomAvailability = [
-  { type: 'Budget Standard', total: 8, available: 2 },
-  { type: 'Deluxe Hill View', total: 12, available: 3 },
-  { type: 'Premium Balcony', total: 10, available: 2 },
-  { type: 'Family Cottage', total: 4, available: 1 },
-  { type: 'Honeymoon Suite', total: 4, available: 0 },
+  { type: 'Deluxe', total: 6, available: 2 },
+  { type: 'Super Deluxe', total: 6, available: 2 },
+  { type: 'Triple Deluxe', total: 4, available: 1 },
+  { type: 'Honeymoon Suite', total: 3, available: 0 },
+  { type: 'Family Suite', total: 4, available: 1 },
 ];
 
 const statusColors: Record<string, string> = {

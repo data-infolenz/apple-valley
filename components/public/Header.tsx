@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type MouseEvent } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,7 +21,7 @@ const navigation = [
   { name: 'Rooms', href: '/#rooms' },
   { name: 'Attractions', href: '/#attractions' },
   { name: 'Packages', href: '/#packages' },
-  { name: 'Dining & Add-ons', href: '/dining' },
+  { name: 'Dining & Add-ons', href: '/#dining' },
   { name: 'Reviews', href: '/#reviews' },
   { name: 'Contact', href: '/#contact' },
   { name: 'Admin', href: '/admin' },
@@ -31,8 +31,43 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [activeHash, setActiveHash] = useState('');
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
+
+  useEffect(() => {
+    const syncHash = () => setActiveHash(window.location.hash);
+    syncHash();
+    window.addEventListener('hashchange', syncHash);
+    window.addEventListener('popstate', syncHash);
+    return () => {
+      window.removeEventListener('hashchange', syncHash);
+      window.removeEventListener('popstate', syncHash);
+    };
+  }, [pathname]);
+
+  const isActive = (href: string) => {
+    const [targetPath, targetHash] = href.split('#');
+    if (targetHash) return pathname === targetPath && activeHash === `#${targetHash}`;
+    if (href === '/') return pathname === '/' && !activeHash;
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
+  const selectNavigation = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    if (pathname === '/' && (href === '/' || href.startsWith('/#'))) {
+      const hash = href.includes('#') ? `#${href.split('#')[1]}` : '';
+      const target = hash ? document.getElementById(hash.slice(1)) : null;
+      if (hash && !target) return;
+      event.preventDefault();
+      if (window.location.pathname + window.location.hash !== href) window.history.pushState(null, '', href);
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+      if (target) target.scrollIntoView({ behavior, block: 'start' });
+      else window.scrollTo({ top: 0, behavior });
+    }
+    setActiveHash(href.includes('#') ? `#${href.split('#')[1]}` : '');
+    setMobileMenuOpen(false);
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -80,10 +115,8 @@ export default function Header() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-forest-500 to-forest-700 flex items-center justify-center">
-                <span className="text-white font-heading font-bold text-lg">AV</span>
-              </div>
+            <Link href="/" onClick={(event) => selectNavigation(event, '/')} className="flex items-center gap-2">
+              <img src="/src/apple%20logo.png" alt="Apple Valley Resort logo" width={76} height={60} className="h-12 w-[61px] md:h-16 md:w-[81px] rounded-lg bg-white object-contain p-1 shrink-0" />
               <div className="hidden sm:block">
                 <h1 className={`font-heading text-xl font-semibold ${scrolled ? 'text-forest-800 dark:text-white' : 'text-forest-800 dark:text-white'}`}>
                   Apple Valley
@@ -100,8 +133,10 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                    pathname === item.href
+                  onClick={(event) => selectNavigation(event, item.href)}
+                  aria-current={isActive(item.href) ? (item.href.includes('#') ? 'location' : 'page') : undefined}
+                  className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                    isActive(item.href)
                       ? scrolled
                         ? 'text-forest-700 bg-forest-50 dark:text-forest-300 dark:bg-forest-900/50'
                         : 'text-forest-700 bg-forest-50 dark:text-white dark:bg-white/20'
@@ -190,9 +225,10 @@ export default function Header() {
                     <Link
                       key={item.name}
                       href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={(event) => selectNavigation(event, item.href)}
+                      aria-current={isActive(item.href) ? (item.href.includes('#') ? 'location' : 'page') : undefined}
                       className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors ${
-                        pathname === item.href
+                        isActive(item.href)
                           ? 'text-forest-700 bg-forest-50 dark:text-forest-300 dark:bg-forest-900/50'
                           : 'text-forest-600 hover:text-forest-800 hover:bg-forest-50 dark:text-mist-300 dark:hover:text-white dark:hover:bg-forest-900/50'
                       }`}

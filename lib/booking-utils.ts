@@ -10,7 +10,7 @@ export function datesOverlap(startA: Date, endA: Date, startB: Date, endB: Date)
 type AvailabilityRoomType = {
   slug: string;
   name: string;
-  rooms: Array<{ isActive: boolean }>;
+  rooms: Array<{ isActive: boolean; status: string }>;
 };
 
 type AvailabilityBooking = {
@@ -33,6 +33,7 @@ export async function getRoomAvailability(checkIn: Date, checkOut: Date) {
 
   return roomTypes.map((roomType) => {
     const totalRooms = roomType.rooms.filter((room) => room.isActive).length;
+    const manuallyAvailableRooms = roomType.rooms.filter((room) => room.isActive && room.status === 'available').length;
     const bookedRooms = activeBookings.reduce((count, booking) => {
       const rooms = decodeJsonField<Array<{ roomTypeId?: string; roomTypeName?: string }>>(booking.rooms, []);
       return count + rooms.filter((room) => (
@@ -46,7 +47,7 @@ export async function getRoomAvailability(checkIn: Date, checkOut: Date) {
       name: roomType.name,
       totalRooms,
       bookedRooms,
-      availableRooms: Math.max(totalRooms - bookedRooms, 0),
+      availableRooms: Math.max(manuallyAvailableRooms - bookedRooms, 0),
     };
   });
 }
