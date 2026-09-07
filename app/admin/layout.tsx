@@ -13,11 +13,8 @@ import {
   LogOut,
   Bell,
   Search,
-  Moon,
-  Sun,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -69,17 +66,11 @@ export default function AdminLayout({
   const [expandedItems, setExpandedItems] = useState<string[]>(['Rooms']);
   const pathname = usePathname();
   const router = useRouter();
-  const { theme, setTheme } = useTheme();
   const logout = useAuthStore((state) => state.logout);
-  const [mounted, setMounted] = useState(false);
   const [latestBookings, setLatestBookings] = useState<NotificationBooking[]>([]);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const latestBookingIdRef = useRef<string | null>(null);
   const isLoginPage = pathname === '/admin/login';
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (isLoginPage) return;
@@ -368,19 +359,6 @@ export default function AdminLayout({
           </div>
 
           <div className="flex items-center gap-3">
-            {mounted && (
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="p-2 rounded-lg hover:bg-forest-100 dark:hover:bg-forest-800"
-              >
-                {theme === 'dark' ? (
-                  <Sun className="w-5 h-5 text-forest-600 dark:text-mist-400" />
-                ) : (
-                  <Moon className="w-5 h-5 text-forest-600" />
-                )}
-              </button>
-            )}
-
             <DropdownMenu onOpenChange={(open) => open && markNotificationsRead()}>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative p-2">

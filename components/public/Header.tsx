@@ -11,11 +11,8 @@ import {
   Phone,
   Mail,
   MapPin,
-  Sun,
-  Moon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTheme } from 'next-themes';
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -32,10 +29,8 @@ const navigation = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [activeHash, setActiveHash] = useState('');
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     const syncHash = () => setActiveHash(window.location.hash);
@@ -72,17 +67,12 @@ export default function Header() {
   };
 
   useEffect(() => {
-    setMounted(true);
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
 
   return (
     <>
@@ -154,20 +144,6 @@ export default function Header() {
 
             {/* Right Side */}
             <div className="flex items-center gap-3">
-              {/* Theme Toggle */}
-              {mounted && (
-                <button
-                  onClick={toggleTheme}
-                  className={`p-2 rounded-lg transition-colors ${
-                    scrolled
-                      ? 'text-forest-600 hover:bg-forest-50 dark:text-mist-300 dark:hover:bg-forest-900/50'
-                      : 'text-forest-700 hover:bg-forest-50 dark:text-white dark:hover:bg-white/20'
-                  }`}
-                >
-                  {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                </button>
-              )}
-
               {/* Book Now Button */}
               <Link href="/booking">
                 <Button className="hidden sm:flex bg-walnut-600 hover:bg-walnut-700 text-white">

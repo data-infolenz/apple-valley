@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { ThemeProvider } from 'next-themes';
 import { Toaster } from '@/components/ui/sonner';
 import { pageMetadata, siteUrl, absoluteUrl } from '@/lib/seo';
 import StructuredData from '@/components/public/StructuredData';
@@ -21,21 +20,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" style={{ colorScheme: 'dark' }}>
       <body className="min-h-screen font-body antialiased">
         <StructuredData data={{ '@context': 'https://schema.org', '@type': 'Hotel',
           name: 'Apple Valley', url: absoluteUrl('/'), image: absoluteUrl('/landing%20page/front.png'),
           address: { '@type': 'PostalAddress', streetAddress: 'Anna Salai, Opposite the Police Station, Municipal Colony',
             addressLocality: 'Kodaikanal', addressRegion: 'Tamil Nadu', postalCode: '624101', addressCountry: 'IN' } }} />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster position="top-right" richColors />
-        </ThemeProvider>
+        {children}
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );

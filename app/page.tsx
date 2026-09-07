@@ -340,11 +340,9 @@ export default function Home() {
               sizes="100vw"
               className={`object-cover transition-opacity duration-1000 ${
                 index === heroSlideIndex ? 'opacity-100' : 'opacity-0'
-              } brightness-95 saturate-110 dark:brightness-75`}
+              }`}
             />
           ))}
-          <div className="absolute inset-0 bg-gradient-to-r from-white/75 via-white/40 to-white/5 dark:from-black/70 dark:via-black/50 dark:to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-white/45 via-transparent to-white/10 dark:from-black/60 dark:via-transparent dark:to-transparent" />
         </div>
 
         {/* Content */}
@@ -358,11 +356,11 @@ export default function Home() {
             <Badge className="hero-eyebrow mb-4 bg-walnut-600/90 text-white border-0">
               Premium Hill Station Resort
             </Badge>
-            <h1 className="hero-title font-heading text-4xl sm:text-5xl lg:text-7xl font-medium text-forest-950 dark:text-white mb-6 leading-tight">
+            <h1 className="hero-title font-heading text-4xl sm:text-5xl lg:text-7xl font-medium text-forest-950 dark:text-white mb-6 leading-tight [text-shadow:0_2px_8px_rgb(0_0_0_/_60%)]">
               <span className="hero-line">Escape to the</span>
               <span className="hero-line hero-line-delay">Misty Hills of <em className="text-walnut-700 dark:text-walnut-300">Kodaikanal</em></span>
             </h1>
-            <p className="hero-description text-lg sm:text-xl text-forest-800 dark:text-white/90 mb-8 leading-relaxed">
+            <p className="hero-description text-lg sm:text-xl text-forest-800 dark:text-white/90 mb-8 leading-relaxed [text-shadow:0_1px_4px_rgb(0_0_0_/_80%)]">
               Book your perfect stay with lake views, cozy rooms, and peaceful hill-station comfort.
             </p>
             <div className="hero-actions flex flex-wrap gap-4">

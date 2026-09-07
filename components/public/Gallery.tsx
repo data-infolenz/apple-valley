@@ -2,16 +2,15 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { galleryImages } from '@/lib/gallery-images';
+import { galleryImages, galleryCategories } from '@/lib/gallery-images';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
-const categories = ['All', 'Property', 'Rooms', 'Dining'];
 export default function Gallery() {
   const [category, setCategory] = useState('All');
   const photos = galleryImages.filter((photo) => category === 'All' || photo.category === category);
   return <>
     <div className="flex flex-wrap gap-3 mb-6" role="group" aria-label="Filter gallery">
-      {categories.map((item) => <button key={item} type="button" aria-pressed={category === item}
+      {galleryCategories.map((item) => <button key={item} type="button" aria-pressed={category === item}
         onClick={() => setCategory(item)}
         className={`rounded-full px-5 py-3 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 ${category === item ? 'bg-forest-700 text-white' : 'rooms-neu-chip'}`}>{item}</button>)}
     </div>
@@ -36,4 +35,3 @@ export default function Gallery() {
     </div>
   </>;
 }
-
