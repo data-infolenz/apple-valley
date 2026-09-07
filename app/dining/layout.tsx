@@ -1,9 +1,6 @@
-import { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'Dining & Add-ons | Apple Valley',
-  description: 'Restaurant, candle light dinner, BBQ, campfire, room heater, sightseeing cab, and more add-on services.',
-};
+export const metadata = pageMetadata("Restaurant & Dining in Kodaikanal | Apple Valley", "Explore Apple Valley’s in-house restaurant, candlelight dinners, BBQ experiences, and celebration add-ons for your Kodaikanal stay.", '/dining');
 
 export default function DiningLayout({
   children,

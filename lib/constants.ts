@@ -277,8 +277,8 @@ export const SEASONS_DATA = [
 
 export const TAX_RATE = 0.12; // 12% GST
 
-export const CHECK_IN_TIME = '14:00';
-export const CHECK_OUT_TIME = '11:00';
+export const CHECK_IN_TIME = '10:00 AM';
+export const CHECK_OUT_TIME = '9:00 PM';
 
 export const CANCELLATION_POLICY = {
   freeCancellationDays: 3,

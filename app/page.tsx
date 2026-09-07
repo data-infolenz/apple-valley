@@ -2,18 +2,20 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import RoomSlideshow from '@/components/public/RoomSlideshow';
 import { roomImages } from '@/lib/room-images';
 import { getRoomAmenities } from '@/lib/room-amenities';
-import { ArrowRight, Star, MapPin, Clock, Shield, Heart, Coffee, Mountain, ChevronLeft, ChevronRight, Phone } from 'lucide-react';
+import { ArrowRight, Star, MapPin, Clock, Shield, Heart, Coffee, Mountain, ChevronLeft, ChevronRight, Phone, ParkingSquareIcon, Stethoscope, Bed, Utensils } from 'lucide-react';
 import Header from '@/components/public/Header';
 import BackgroundParticles from '@/components/public/BackgroundParticles';
 import Footer from '@/components/public/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import restaurantImage from '@/components/public/src/img/in house restaurant.jpg';
+import restaurantImage from '@/components/public/src/img/in house restaurant.png';
+import restaurantImage2 from '@/components/public/src/img/in house restaurant1.png';
 import kodaiLake1 from '@/components/public/src/img/1.png';
 import kodaiLake2 from '@/components/public/src/img/kodai lake 2.png';
 import kodaiLake3 from '@/components/public/src/img/kodai lake 3.png';
@@ -52,13 +54,12 @@ const heroSlides = [
   '/landing%20page/IMG_6523.jpg',
   '/landing%20page/IMG_6524.jpg',
   '/landing%20page/IMG_6525.jpg',
-  '/landing%20page/IMG_6686.jpg',
-  '/landing%20page/IMG_6699.jpg',
-  '/landing%20page/IMG_6703.jpg',
   '/landing%20page/reception.png',
   '/landing%20page/recption%202.png',
   '/landing%20page/waiting%20area.png',
 ];
+
+const restaurantImages = [restaurantImage.src, restaurantImage2.src];
 
 const kodaiLakeImages = [
   kodaiLake1.src,
@@ -192,8 +193,34 @@ export default function Home() {
     {
       icon: Mountain,
       title: 'Prime Location',
-      description: 'Minutes from Kodai Lake with stunning misty hill views',
+      description: 'Discover the charm of Kodaikanal from Apple Valley, an inviting base for exploring the hill town and making the most of your getaway.',
     },
+     {
+      icon: ParkingSquareIcon,
+      title: 'Car Parking',
+      description: 'Enjoy a worry-free stay with our spacious and secure car-parking facility, offering easy access and complete convenience throughout your visit.',
+    },
+    {
+      icon: Stethoscope,
+      title: 'Doctor on call',
+      description: 'Medical assistance is just a call away, with a doctor available on request for added peace of mind during your stay.',
+    },
+     {
+      icon: Phone,
+      title: 'Travel Desk & Concierge',
+      description: 'Our concierge team is available to assist with your needs and reservations throughout your stay.',
+    },
+    {
+      icon: Bed,
+      title: 'Driver Accommodation',
+      description: 'Rest for you and your driver—our driver accommodation offers a place to unwind between journeys.',
+    },
+ {
+      icon: Utensils,
+      title: 'In-House Restaurant',
+      description: 'Enjoy delicious meals at our in-house restaurant, serving a variety of local and international cuisines.',
+    },
+
     {
       icon: Heart,
       title: 'Warm Hospitality',
@@ -265,22 +292,34 @@ export default function Home() {
 
   const testimonials = [
     {
-      name: 'Priya Sharma',
+      name: 'Gajendra babu',
       location: 'Chennai',
       rating: 5,
-      text: 'The misty hills view from our balcony was magical. Staff was incredibly helpful. Perfect getaway!',
+      text: 'We stayed in Hotel apple valley through happy holidays.Xcellent customer service,strong hospitality,good restaurant with humble service. Nice gardening serving food for birds and i can sparrows after a long time. Car parking also available. Worth for money. All together good hotel to stay in kodaikanal town',
     },
     {
-      name: 'Rahul Menon',
+      name: 'Passion4vacations',
       location: 'Bangalore',
-      rating: 5,
-      text: 'Family cottage was spacious and cozy. Kids loved the campfire. Will definitely return.',
+      rating: 4,
+      text: 'We really liked the ambience of the hotel...nice place to stay in kodaikanal with great hotel staff, good service. It has free Wifi, a water dispenser (so no electric kettle). Washrooms are in good condition. Well worth the price.',
     },
     {
-      name: 'Anjali Krishnan',
-      location: 'Coimbatore',
+      name: 'Sankey',
+      location: 'malaysia',
       rating: 5,
-      text: 'Honeymoon suite exceeded expectations. Candle light dinner was romantic. Highly recommend!',
+      text: 'Apple Valley resort was really a class hotel, the hotel room were spacious, hotel interior was good. Even the hotel staff was friendly. Hotel is at the centre of the city Kodaikanal. The lake is just walking distance from the hotel.',
+    },
+    {
+      name: 'Floor v Kempen',
+      location: 'The Hague, The Netherlands',
+      rating: 4,
+      text: 'We had a perfect stay at the Apple Valley. The super deluxe room was nice and clean with a great view of the mountains. The bed was really comfortable and there is good wifi and a hot shower.The staff was extremely friendly and helpfull. They remembered my friends birthday and even decorated the room. We would definitely stay at this hotel again!.',
+    },
+    {
+      name: 'Rahul Gambhwa',
+      location: 'Delhi',
+      rating: 5,
+      text: 'We stayed here for 2 nights, hotel location is close to market. Rooms are bigger, comfortable and clean. If you are in group there is good sitting area. A person in front office Mr. Sam help us during check-in & check out very gently For dinner they took extra care the prepares excellent food at all time Mr. Nambhu working as F&B attendant is very polite and humble person always available in service.Overall we had wonderful experience.',
     },
   ];
 
@@ -293,11 +332,13 @@ export default function Home() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           {heroSlides.map((slide, index) => (
-            <img
+            <Image
               key={slide}
               src={slide}
               alt="Apple Valley Kodaikanal resort"
-              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+              fill
+              sizes="100vw"
+              className={`object-cover transition-opacity duration-1000 ${
                 index === heroSlideIndex ? 'opacity-100' : 'opacity-0'
               } brightness-95 saturate-110 dark:brightness-75`}
             />
@@ -438,10 +479,13 @@ export default function Home() {
             >
               <Badge variant="secondary" className="rooms-neu-chip mb-4">Why Choose Us</Badge>
               <h2 className="font-heading text-3xl sm:text-4xl font-bold text-forest-800 dark:text-white mb-6">
-                Your Perfect Hill Station Escape Awaits
+                Relax, Refresh and Enjoy the Hills
               </h2>
               <p className="text-lg text-forest-600 dark:text-mist-400 mb-8">
-                Nestled in the misty hills of Kodaikanal, Apple Valley offers an unforgettable experience with premium accommodations, stunning views, and warm hospitality that makes every stay special.
+                Nestled in the misty hills of Kodaikanal, Apple Valley offers an unforgettable experience with premium accommodations, stunning views, and warm hospitality that makes every stay special.<br></br>Where misty mornings awaken your soul,
+every breathtaking view feels like a dream.
+Where luxury embraces the magic of Kodaikanal—
+Apple Valley, a stay that lives in your heart forever.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {whyChooseUs.map((item, index) => (
@@ -475,10 +519,13 @@ export default function Home() {
               viewport={{ once: true }}
               className="rooms-neu-panel relative p-3 mb-6"
             >
-              <img
-                src={whyChooseImage.src}
+              <Image
+                src={whyChooseImage}
                 alt="Apple Valley"
                 loading="lazy"
+                width={whyChooseImage.width}
+                height={whyChooseImage.height}
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="w-full h-auto rounded-2xl"
               />
               <div className="rooms-neu-panel absolute -bottom-6 left-6 p-4 rounded-xl">
@@ -595,7 +642,8 @@ export default function Home() {
                   }
                 }}
               >
-                <img
+                <Image
+                  fill
                   src={
                     attraction.name === 'Kodai Lake'
                       ? kodaiLakeImages[kodaiLakeIndex]
@@ -608,6 +656,7 @@ export default function Home() {
                       : attraction.image
                   }
                   alt={attraction.name}
+                  sizes="(max-width: 768px) 50vw, 25vw"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 {attraction.name === 'Kodai Lake' && (
@@ -798,10 +847,12 @@ export default function Home() {
               >
                 <Card className="room-card rooms-neu-panel h-full overflow-hidden transition-all duration-300">
                   <div className="relative h-48">
-                    <img
+                    <Image
                       src={pkg.image}
                       alt={pkg.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     <Badge className="rooms-neu-chip absolute top-4 right-4 px-3 py-1">
@@ -853,7 +904,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="rooms-neu-panel overflow-hidden p-3">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-              <img src={restaurantImage.src} alt="Apple Valley in-house restaurant" loading="lazy" className="w-full h-72 sm:h-96 object-cover rounded-2xl" />
+              <div className="relative w-full h-72 sm:h-96 overflow-hidden rounded-2xl">
+                <RoomSlideshow images={restaurantImages} name="Apple Valley in-house restaurant" />
+              </div>
               <CardContent className="p-6 sm:p-8">
                 <Badge className="rooms-neu-chip mb-4">Dining &amp; Add-ons</Badge>
                 <h2 className="font-heading text-3xl sm:text-4xl text-forest-800 dark:text-white mb-4">Good Food, Special Moments</h2>
@@ -945,8 +998,8 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-walnut-600 shrink-0" />
-                  <a href="tel:+919361979918" className="text-forest-700 dark:text-mist-300 hover:text-forest-900 dark:hover:text-white">
-                    +91 93619 79918
+                  <a href="tel:+919488401385" className="text-forest-700 dark:text-mist-300 hover:text-forest-900 dark:hover:text-white">
+                    +91 9488401385
                   </a>
                 </div>
               </div>
@@ -989,7 +1042,7 @@ export default function Home() {
               <p className="text-green-100">Chat with us on WhatsApp for instant support</p>
             </div>
             <a
-              href="https://wa.me/919361979918?text=Hi,%20I%20would%20like%20to%20inquire%20about%20booking%20at%20Apple%20Valley"
+              href="https://wa.me/+919488401385?text=Hi,%20I%20would%20like%20to%20inquire%20about%20booking%20at%20Apple%20Valley"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 bg-white text-green-700 font-semibold rounded-lg shadow-sm hover:bg-green-50 transition-colors"

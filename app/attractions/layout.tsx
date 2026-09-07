@@ -1,9 +1,6 @@
-import { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'Nearby Attractions | Apple Valley',
-  description: 'Explore Kodaikanal\'s best attractions - Kodai Lake, Coaker\'s Walk, Pillar Rocks, Pine Forest, and more.',
-};
+export const metadata = pageMetadata("Kodaikanal Attractions Guide | Apple Valley", "Plan outings around Kodaikanal with Apple Valley’s guide to Kodai Lake, Coaker’s Walk, Pillar Rocks, and Pine Forest.", '/attractions');
 
 export default function AttractionsLayout({
   children,

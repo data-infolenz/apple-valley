@@ -3,6 +3,10 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: '/:section(admin|customer|booking|api)/:path*',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      },
+      {
         source: '/:path*',
         headers: [
           { key: 'X-Frame-Options', value: 'DENY' },

@@ -1,9 +1,6 @@
-import { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'Packages & Offers | Apple Valley',
-  description: 'Exclusive stay packages for couples, families, and corporate groups. Best value for your Kodaikanal vacation.',
-};
+export const metadata = pageMetadata("Kodaikanal Stay Packages | Apple Valley", "Explore Apple Valley stay packages for couples and families in Kodaikanal. Review package details and enquire about availability for your dates.", '/packages');
 
 export default function PackagesLayout({
   children,

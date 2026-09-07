@@ -2,6 +2,7 @@
 
 import { useState, useEffect, type MouseEvent } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -23,6 +24,7 @@ const navigation = [
   { name: 'Packages', href: '/#packages' },
   { name: 'Dining & Add-ons', href: '/#dining' },
   { name: 'Reviews', href: '/#reviews' },
+  { name: 'Gallery', href: '/gallery' },
   { name: 'Contact', href: '/#contact' },
   { name: 'Admin', href: '/admin' },
 ];
@@ -88,13 +90,13 @@ export default function Header() {
       <div className="hidden md:block bg-gradient-to-b from-green-700 to-green-900 text-white text-sm">
         <div className="max-w-7xl mx-auto px-4 py-2 flex justify-end items-center gap-8">
           <div className="flex items-center gap-6">
-            <a href="tel:+919361979918" className="flex items-center gap-1 hover:text-walnut-300 transition-colors">
+            <a href="tel:+919488401385" className="flex items-center gap-1 hover:text-walnut-300 transition-colors">
               <Phone className="w-3.5 h-3.5" />
-              <span>+91 93619 79918</span>
+              <span>+91 9488401385</span>
             </a>
-            <a href="mailto:info@applevalley.com" className="flex items-center gap-1 hover:text-walnut-300 transition-colors">
+            <a href="mailto:stay@hotelapplevalley.com" className="flex items-center gap-1 hover:text-walnut-300 transition-colors">
               <Mail className="w-3.5 h-3.5" />
-              <span>info@applevalley.com</span>
+              <span>stay@hotelapplevalley.com</span>
             </a>
           </div>
           <div className="flex items-center gap-1">
@@ -116,11 +118,11 @@ export default function Header() {
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link href="/" onClick={(event) => selectNavigation(event, '/')} className="flex items-center gap-2">
-              <img src="/src/apple%20logo.png" alt="Apple Valley Resort logo" width={76} height={60} className="h-12 w-[61px] md:h-16 md:w-[81px] rounded-lg bg-white object-contain p-1 shrink-0" />
+              <Image src="/src/apple%20logo.png" alt="Apple Valley Resort logo" width={76} height={60} className="h-12 w-[61px] md:h-16 md:w-[81px] rounded-lg bg-white object-contain p-1 shrink-0" />
               <div className="hidden sm:block">
-                <h1 className={`font-heading text-xl font-semibold ${scrolled ? 'text-forest-800 dark:text-white' : 'text-forest-800 dark:text-white'}`}>
+                <p className={`font-heading text-xl font-semibold ${scrolled ? 'text-forest-800 dark:text-white' : 'text-forest-800 dark:text-white'}`}>
                   Apple Valley
-                </h1>
+                </p>
                 <p className={`text-xs tracking-wider uppercase ${scrolled ? 'text-forest-600 dark:text-mist-400' : 'text-forest-600 dark:text-white/80'}`}>
                   Resort
                 </p>
@@ -128,14 +130,14 @@ export default function Header() {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-1">
+            <div className="hidden xl:flex items-center gap-1">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
                   onClick={(event) => selectNavigation(event, item.href)}
                   aria-current={isActive(item.href) ? (item.href.includes('#') ? 'location' : 'page') : undefined}
-                  className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                  className={`px-2 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                     isActive(item.href)
                       ? scrolled
                         ? 'text-forest-700 bg-forest-50 dark:text-forest-300 dark:bg-forest-900/50'
@@ -176,7 +178,7 @@ export default function Header() {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setMobileMenuOpen(true)}
-                className={`lg:hidden p-2 rounded-lg ${
+                className={`xl:hidden p-2 rounded-lg ${
                   scrolled
                     ? 'text-forest-800 dark:text-white'
                     : 'text-forest-800 dark:text-white'
@@ -197,7 +199,7 @@ export default function Header() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 z-50 lg:hidden"
+              className="fixed inset-0 bg-black/50 z-50 xl:hidden"
               onClick={() => setMobileMenuOpen(false)}
             />
             <motion.div
@@ -205,7 +207,7 @@ export default function Header() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-forest-950 z-50 lg:hidden shadow-2xl"
+              className="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-forest-950 z-50 xl:hidden shadow-2xl"
             >
               <div className="p-4">
                 <div className="flex items-center justify-between mb-6">

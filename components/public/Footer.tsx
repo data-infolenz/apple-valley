@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
   Facebook,
@@ -20,6 +21,7 @@ const quickLinks = [
   { name: 'Packages', href: '/packages' },
   { name: 'Dining', href: '/dining' },
   { name: 'Gallery', href: '/gallery' },
+  { name: 'Stay Guide & FAQs', href: '/faq' },
   { name: 'Contact', href: '/contact' },
 ];
 
@@ -41,7 +43,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <img src="/src/apple%20logo.png" alt="Apple Valley Resort logo" width={76} height={60} className="h-12 w-[61px] md:h-16 md:w-[81px] rounded-lg bg-white object-contain p-1 shrink-0" />
+              <Image src="/src/apple%20logo.png" alt="Apple Valley Resort logo" width={76} height={60} className="h-12 w-[61px] md:h-16 md:w-[81px] rounded-lg bg-white object-contain p-1 shrink-0" />
               <div>
                 <h3 className="font-heading text-xl font-semibold">Apple Valley</h3>
                 <p className="text-xs text-mist-400 tracking-wider uppercase">Resort</p>
@@ -52,7 +54,7 @@ export default function Footer() {
             </p>
             <div className="flex gap-3">
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/share/14oqk8HxTGN/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-forest-800 hover:bg-forest-700 flex items-center justify-center transition-colors"
@@ -133,31 +135,31 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="tel:+919361979918"
+                  href="tel:+919488401385"
                   className="flex items-center gap-3 text-mist-300 hover:text-white text-sm transition-colors"
                 >
                   <Phone className="w-4 h-4 text-walnut-400" />
-                  +91 93619 79918
+                  +91 94884 01385
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:info@applevalley.com"
+                  href="mailto:stay@hotelapplevalley.com"
                   className="flex items-center gap-3 text-mist-300 hover:text-white text-sm transition-colors"
                 >
                   <Mail className="w-4 h-4 text-walnut-400" />
-                  info@applevalley.com
+                  stay@hotelapplevalley.com
                 </a>
               </li>
               <li className="flex items-center gap-3 text-mist-300 text-sm">
                 <Clock className="w-4 h-4 text-walnut-400" />
-                <span>Check-in: 2 PM | Check-out: 11 AM</span>
+                <span>Check-in: 10 AM | Check-out: 9 PM</span>
               </li>
             </ul>
 
             {/* WhatsApp CTA */}
             <a
-              href="https://wa.me/919361979918?text=Hi,%20I%20would%20like%20to%20inquire%20about%20booking%20at%20Apple%20Valley"
+              href="https://wa.me/919488401385?text=Hi,%20I%20would%20like%20to%20inquire%20about%20booking%20at%20Apple%20Valley"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm transition-colors"
@@ -174,7 +176,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-mist-400 text-sm">
-              {currentYear} Apple Valley. All rights reserved.
+               © DataInfolenZ . All rights reserved. {currentYear}
             </p>
             <div className="flex items-center gap-6 text-sm text-mist-400">
               <Link href="/privacy" className="hover:text-white transition-colors">

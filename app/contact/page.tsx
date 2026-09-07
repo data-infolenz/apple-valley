@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import {
   MapPin,
   Phone,
@@ -30,12 +31,12 @@ import {
 import { toast } from 'sonner';
 import kodaiHomePageImage from '@/components/public/src/img/kodai home page.jpg';
 
-const whatsappNumber = '919361979918';
+const whatsappNumber = '+919488401385';
 
 const faqs = [
   {
     question: 'What are the check-in and check-out times?',
-    answer: 'Check-in is at 2:00 PM and check-out is at 11:00 AM. Early check-in and late check-out can be arranged based on availability with prior request.',
+    answer: 'Check-in is at 10:00 Am and check-out is at 9:00 Pm. Early check-in and late check-out can be arranged based on availability with prior request.',
   },
   {
     question: 'Is parking available at the property?',
@@ -76,12 +77,12 @@ const contactInfo = [
   {
     icon: Phone,
     title: 'Phone',
-    content: ['+91 93619 79918', '+91 4542 240123'],
+    content: ['+91 94884 01385', '+91 7373099111'],
   },
   {
     icon: Mail,
     title: 'Email',
-    content: ['info@applevalley.com', 'reservations@applevalley.com'],
+    content: ['stay@hotelapplevalley.com'],
   },
 ];
 
@@ -130,10 +131,12 @@ export default function ContactPage() {
       {/* Hero */}
       <section className="relative h-[40vh] flex items-center justify-center">
         <div className="absolute inset-0">
-          <img
+          <Image
             src={kodaiHomePageImage.src}
             alt="Contact"
             className="w-full h-full object-cover"
+            fill
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-black/50" />
         </div>
@@ -199,11 +202,11 @@ export default function ContactPage() {
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-forest-600 dark:text-mist-400">Check-in</span>
-                        <span className="font-medium text-forest-800 dark:text-white">2:00 PM</span>
+                        <span className="font-medium text-forest-800 dark:text-white">10:00 AM</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-forest-600 dark:text-mist-400">Check-out</span>
-                        <span className="font-medium text-forest-800 dark:text-white">11:00 AM</span>
+                        <span className="font-medium text-forest-800 dark:text-white">9:00 PM</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-forest-600 dark:text-mist-400">Reception</span>
@@ -219,7 +222,7 @@ export default function ContactPage() {
 
                 {/* WhatsApp CTA */}
                 <a
-                  href="https://wa.me/919361979918?text=Hi,%20I%20would%20like%20to%20inquire%20about%20booking%20at%20Apple%20Valley"
+                  href="https://wa.me/+919488401385?text=Hi,%20I%20would%20like%20to%20inquire%20about%20booking%20at%20Apple%20Valley"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block"
@@ -285,7 +288,7 @@ export default function ContactPage() {
                             id="phone"
                             type="tel"
                             required
-                            placeholder="+91 93619 79918"
+                            placeholder="+91 94884 01385"
                             className="mt-1"
                             value={formData.phone}
                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}

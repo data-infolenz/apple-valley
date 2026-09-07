@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Calendar,
   Users,
@@ -175,9 +176,10 @@ export default function PackagesPage() {
       {/* Hero */}
       <section className="relative h-[50vh] flex items-center justify-center">
         <div className="absolute inset-0">
-          <img
-            src={hotelPackageHero.src}
+          <Image
+            src={hotelPackageHero}
             alt="Packages"
+            fill
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/50" />
@@ -224,9 +226,10 @@ export default function PackagesPage() {
                   <div className="grid grid-cols-1 lg:grid-cols-2">
                     {/* Image Side */}
                     <div className="relative h-64 lg:h-auto lg:min-h-[400px]">
-                      <img
+                      <Image
                         src={pkg.image}
                         alt={pkg.name}
+                        fill
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent lg:hidden" />
@@ -349,9 +352,10 @@ export default function PackagesPage() {
                 <Card className="overflow-hidden hover:shadow-xl transition-shadow h-full">
                   <div className="grid grid-cols-1 sm:grid-cols-2">
                     <div className="relative h-40 sm:h-full">
-                      <img
+                      <Image
                         src={pkg.image}
                         alt={pkg.name}
+                        fill
                         className="w-full h-full object-cover"
                       />
                       <Badge className="absolute top-3 left-3 bg-green-600 text-white text-xs">
@@ -415,7 +419,7 @@ export default function PackagesPage() {
                   </Button>
                 </Link>
                 <a
-                  href="https://wa.me/919361979918?text=Hi,%20I%20would%20like%20to%20discuss%20a%20custom%20package%20for%20my%20group"
+                  href="https://wa.me/919488401385?text=Hi,%20I%20would%20like%20to%20discuss%20a%20custom%20package%20for%20my%20group"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition-colors"

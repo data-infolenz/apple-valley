@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   UtensilsCrossed,
   Flame,
@@ -20,7 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import inHouseRestaurantImage from '@/components/public/src/img/in house restaurant.jpg';
+import inHouseRestaurantImage from '@/components/public/src/img/in house restaurant.png';
 import candleLightDinnerImage from '@/components/public/src/img/Candle Light Dinner.jpg';
 import bbqDinnerImage from '@/components/public/src/img/bbq dinner.webp';
 import restaurantHeroImage from '@/components/public/src/img/restaurant.webp';
@@ -155,9 +156,10 @@ export default function DiningPage() {
       {/* Hero */}
       <section className="relative h-[40vh] flex items-center justify-center">
         <div className="absolute inset-0">
-          <img
-            src={restaurantHeroImage.src}
+          <Image
+            src={restaurantHeroImage}
             alt="Dining"
+            fill
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/50" />
@@ -223,10 +225,12 @@ export default function DiningPage() {
                   >
                     <Card className="overflow-hidden h-full hover:shadow-xl transition-shadow">
                       <div className="relative h-48">
-                        <img
+                        <Image
                           src={option.image}
                           alt={option.name}
-                          className="w-full h-full object-cover"
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                         <Badge className="absolute top-4 left-4 bg-walnut-600 text-white">

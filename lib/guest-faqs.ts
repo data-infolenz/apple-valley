@@ -1,0 +1,10 @@
+export const guestFaqs = [
+  { question: 'Where is Apple Valley located in Kodaikanal?', answer: 'Apple Valley is on Anna Salai, opposite the Police Station, Municipal Colony, Kodaikanal, Tamil Nadu 624101. Visit our contact page for the location map and travel enquiries.' },
+  { question: 'What room types can I book at Apple Valley?', answer: 'Our room categories include Deluxe, Super Deluxe, Triple Deluxe, Honeymoon Suite, and Family Suite. Compare room details and check availability for your dates before booking.' },
+  { question: 'Does Apple Valley have an in-house restaurant?', answer: 'Yes. Apple Valley has an in-house restaurant. The dining page also lists candlelight dinners, BBQ experiences, and celebration add-ons. Contact the property to confirm availability and arrangements for your stay.' },
+  { question: 'Where can I see photos of the rooms and restaurant?', answer: 'Our gallery includes photographs of Deluxe, Super Deluxe, Triple Deluxe, and Honeymoon rooms, the reception, and the in-house restaurant. Select a category and open any photo for a larger view.' },
+  { question: 'How do I check room availability and book a stay?', answer: 'Open the booking page and enter your travel dates and guest details to check available rooms. Review the room, total price, and booking terms before confirming your stay.' },
+  { question: 'Which Kodaikanal attractions can I explore?', answer: 'Our attractions guide introduces Kodai Lake, Coaker’s Walk, Pillar Rocks, and Pine Forest. Check local opening hours, weather, and transport arrangements when planning your visit.' },
+  { question: 'How can I confirm check-in times and cancellation terms?', answer: 'Contact the property before booking to confirm the check-in and check-out times, cancellation terms, and any early-arrival requests that apply to your reservation.' },
+];
+
