@@ -46,7 +46,7 @@ export default function Footer() {
               <Image src="/src/apple%20logo.png" alt="Apple Valley Resort logo" width={76} height={60} className="h-12 w-[61px] md:h-16 md:w-[81px] rounded-lg bg-white object-contain p-1 shrink-0" />
               <div>
                 <h3 className="font-heading text-xl font-semibold">Apple Valley</h3>
-                <p className="text-xs text-mist-400 tracking-wider uppercase">Resort</p>
+                <p className="text-xs text-mist-400 tracking-wider uppercase">HOTEL</p>
               </div>
             </div>
             <p className="text-mist-300 text-sm leading-relaxed mb-6">
@@ -129,8 +129,8 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 mt-1 text-walnut-400 shrink-0" />
                 <span className="text-mist-300 text-sm">
-                  Anna Salai, Opposite the Police Station,<br />
-                  Municipal Colony, Kodaikanal, Tamil Nadu 624101
+                  Anna Salai, Opposite the KodaiPolice Station,<br />
+                Kodaikanal, Tamil Nadu 624101
                 </span>
               </li>
               <li>
@@ -153,7 +153,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3 text-mist-300 text-sm">
                 <Clock className="w-4 h-4 text-walnut-400" />
-                <span>Check-in: 10 AM | Check-out: 9 PM</span>
+                <span>Check-in: 10:00 AM | Check-out: 9:00 AM</span>
               </li>
             </ul>
 

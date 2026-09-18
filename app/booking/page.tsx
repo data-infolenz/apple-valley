@@ -55,7 +55,6 @@ const fallbackRoomTypes: RoomTypeOption[] = [
   { id: 'super-deluxe', name: 'Super Deluxe', price: 4500, maxOccupancy: 2, size: 320 },
   { id: 'triple-deluxe', name: 'Triple Deluxe', price: 5200, maxOccupancy: 3, size: 360 },
   { id: 'honeymoon-suite', name: 'Honeymoon Suite', price: 7500, maxOccupancy: 2, size: 400 },
-  { id: 'family-suite', name: 'Family Suite', price: 6800, maxOccupancy: 4, size: 450 },
 ];
 
 const addOns = [
@@ -183,7 +182,7 @@ function BookingContent() {
           price: room.basePrice,
           maxOccupancy: room.maxOccupancy,
           size: room.size,
-        }));
+        })).filter((room: RoomTypeOption) => room.id !== 'family-suite');
 
         if (fetchedRoomTypes.length) {
           setRoomTypes(fetchedRoomTypes);
@@ -637,8 +636,8 @@ function BookingContent() {
                           </div>
                           <Separator className="mb-4" />
                           <div className="text-left space-y-2 text-sm">
-                            <p><strong>Check-in:</strong> {formatDate(bookingData.checkIn)} at 2:00 PM</p>
-                            <p><strong>Check-out:</strong> {formatDate(bookingData.checkOut)} at 11:00 AM</p>
+                            <p><strong>Check-in:</strong> {formatDate(bookingData.checkIn)} at 10:00 AM</p>
+                            <p><strong>Check-out:</strong> {formatDate(bookingData.checkOut)} at 9:00 AM</p>
                             <p><strong>Amount:</strong> ₹{grandTotal.toLocaleString()}</p>
                           </div>
                         </CardContent>

@@ -16,56 +16,28 @@ import { Button } from '@/components/ui/button';
 
 const navigation = [
   { name: 'Home', href: '/' },
-  { name: 'Rooms', href: '/#rooms' },
-  { name: 'Attractions', href: '/#attractions' },
-  { name: 'Packages', href: '/#packages' },
-  { name: 'Dining & Add-ons', href: '/#dining' },
-  { name: 'Reviews', href: '/#reviews' },
+  { name: 'Rooms', href: '/rooms' },
+  { name: 'Attractions', href: '/attractions' },
+  { name: 'Packages', href: '/packages' },
+  { name: 'Dining & Add-ons', href: '/dining' },
+  { name: 'Reviews', href: '/reviews' },
   { name: 'Gallery', href: '/gallery' },
-  { name: 'Contact', href: '/#contact' },
+  { name: 'Contact', href: '/contact' },
   { name: 'Admin', href: '/admin' },
 ];
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeHash, setActiveHash] = useState('');
   const pathname = usePathname();
 
-  useEffect(() => {
-    const syncHash = () => setActiveHash(window.location.hash);
-    syncHash();
-    window.addEventListener('hashchange', syncHash);
-    window.addEventListener('popstate', syncHash);
-    return () => {
-      window.removeEventListener('hashchange', syncHash);
-      window.removeEventListener('popstate', syncHash);
-    };
-  }, [pathname]);
+  const isActive = (href: string) =>
+    href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`);
 
-  const isActive = (href: string) => {
-    const [targetPath, targetHash] = href.split('#');
-    if (targetHash) return pathname === targetPath && activeHash === `#${targetHash}`;
-    if (href === '/') return pathname === '/' && !activeHash;
-    return pathname === href || pathname.startsWith(`${href}/`);
-  };
-
-  const selectNavigation = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+  const selectNavigation = (event: MouseEvent<HTMLAnchorElement>) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
-    if (pathname === '/' && (href === '/' || href.startsWith('/#'))) {
-      const hash = href.includes('#') ? `#${href.split('#')[1]}` : '';
-      const target = hash ? document.getElementById(hash.slice(1)) : null;
-      if (hash && !target) return;
-      event.preventDefault();
-      if (window.location.pathname + window.location.hash !== href) window.history.pushState(null, '', href);
-      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-      if (target) target.scrollIntoView({ behavior, block: 'start' });
-      else window.scrollTo({ top: 0, behavior });
-    }
-    setActiveHash(href.includes('#') ? `#${href.split('#')[1]}` : '');
     setMobileMenuOpen(false);
   };
-
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -107,14 +79,14 @@ export default function Header() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
-            <Link href="/" onClick={(event) => selectNavigation(event, '/')} className="flex items-center gap-2">
-              <Image src="/src/apple%20logo.png" alt="Apple Valley Resort logo" width={76} height={60} className="h-12 w-[61px] md:h-16 md:w-[81px] rounded-lg bg-white object-contain p-1 shrink-0" />
+            <Link href="/" onClick={selectNavigation} className="flex items-center gap-2">
+              <Image src="/src/apple%20logo.png" alt="Apple Valley Resort logo" width={76} height={60} loading="eager" className="h-12 w-[61px] md:h-16 md:w-[81px] rounded-lg bg-white object-contain p-1 shrink-0" />
               <div className="hidden sm:block">
                 <p className={`font-heading text-xl font-semibold ${scrolled ? 'text-forest-800 dark:text-white' : 'text-forest-800 dark:text-white'}`}>
                   Apple Valley
                 </p>
                 <p className={`text-xs tracking-wider uppercase ${scrolled ? 'text-forest-600 dark:text-mist-400' : 'text-forest-600 dark:text-white/80'}`}>
-                  Resort
+                  Hotel
                 </p>
               </div>
             </Link>
@@ -125,8 +97,8 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  onClick={(event) => selectNavigation(event, item.href)}
-                  aria-current={isActive(item.href) ? (item.href.includes('#') ? 'location' : 'page') : undefined}
+                  onClick={selectNavigation}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
                   className={`px-2 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                     isActive(item.href)
                       ? scrolled
@@ -203,8 +175,8 @@ export default function Header() {
                     <Link
                       key={item.name}
                       href={item.href}
-                      onClick={(event) => selectNavigation(event, item.href)}
-                      aria-current={isActive(item.href) ? (item.href.includes('#') ? 'location' : 'page') : undefined}
+                      onClick={selectNavigation}
+                      aria-current={isActive(item.href) ? 'page' : undefined}
                       className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors ${
                         isActive(item.href)
                           ? 'text-forest-700 bg-forest-50 dark:text-forest-300 dark:bg-forest-900/50'

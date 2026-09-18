@@ -5,6 +5,5 @@ export const guestFaqs = [
   { question: 'Where can I see photos of the rooms and restaurant?', answer: 'Our gallery includes photographs of Deluxe, Super Deluxe, Triple Deluxe, and Honeymoon rooms, the reception, and the in-house restaurant. Select a category and open any photo for a larger view.' },
   { question: 'How do I check room availability and book a stay?', answer: 'Open the booking page and enter your travel dates and guest details to check available rooms. Review the room, total price, and booking terms before confirming your stay.' },
   { question: 'Which Kodaikanal attractions can I explore?', answer: 'Our attractions guide introduces Kodai Lake, Coaker’s Walk, Pillar Rocks, and Pine Forest. Check local opening hours, weather, and transport arrangements when planning your visit.' },
-  { question: 'How can I confirm check-in times and cancellation terms?', answer: 'Contact the property before booking to confirm the check-in and check-out times, cancellation terms, and any early-arrival requests that apply to your reservation.' },
+  { question: 'How can I confirm check-in times and cancellation terms?', answer: 'Check-in is at 10:00 AM and check-out is at 9:00 AM. Contact the property before booking to confirm cancellation terms and any early-arrival requests that apply to your reservation.' },
 ];
-

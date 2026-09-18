@@ -70,16 +70,16 @@ const celebrationAddOns: Array<{
   includes?: string[];
   sizes?: string[];
 }> = [
-  {
-    id: 'campfire',
-    name: 'Campfire Evening',
-    icon: Flame,
-    description: 'Private campfire session with wooden seating and hill views. Perfect for chilly evenings.',
-    price: 500,
-    unit: 'per session',
-    duration: '2-3 hours',
-    includes: ['Firewood', 'Seating arrangement', 'Snacks (optional extra)'],
-  },
+  // {
+  //   id: 'campfire',
+  //   name: 'Campfire Evening',
+  //   icon: Flame,
+  //   description: 'Private campfire session with wooden seating and hill views. Perfect for chilly evenings.',
+  //   price: 500,
+  //   unit: 'per session',
+  //   duration: '2-3 hours',
+  //   includes: ['Firewood', 'Seating arrangement', 'Snacks (optional extra)'],
+  // },
   {
     id: 'birthday-cake',
     name: 'Birthday Cake',

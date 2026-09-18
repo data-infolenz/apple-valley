@@ -33,7 +33,7 @@ export const galleryImages = [
   ...photoSeries('art ', range(3), 'jpg', 'Artwork', 'Artwork'),
   ...photoSeries('bookself', range(4), 'jpg', 'Bookshelf', 'Bookshelves'),
   ...photoSeries('corrdor2', range(4), 'jpg', 'Corridor', 'Corridors'),
-  ...photoSeries('kitchan', range(7), 'jpg', 'Kitchen view', 'Kitchen'),
+  ...photoSeries('kitchan', range(7), 'jpg', 'Restaurant view', 'Restaurant'),
   ...photoSeries('Outsite', range(7), 'jpg', 'Property exterior', 'Exterior'),
   ...photoSeries('parking area', range(4), 'jpeg', 'Parking area', 'Parking'),
   galleryPhoto('playing (1).jpeg', 'Play area overview', 'Play Area'),

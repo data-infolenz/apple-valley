@@ -415,8 +415,8 @@ export default function AdminBookingsPage() {
               </div>
               <div class="box">
                 <h3>Stay Details</h3>
-                <div class="line"><span>Check-in</span><strong>${formatDate(booking.checkIn)} at 2:00 PM</strong></div>
-                <div class="line"><span>Check-out</span><strong>${formatDate(booking.checkOut)} at 11:00 AM</strong></div>
+                <div class="line"><span>Check-in</span><strong>${formatDate(booking.checkIn)} at 10:00 AM</strong></div>
+                <div class="line"><span>Check-out</span><strong>${formatDate(booking.checkOut)} at 9:00 AM</strong></div>
                 <div class="line"><span>Guests</span><strong>${booking.adults} adults, ${booking.children} children</strong></div>
                 <div class="line"><span>Status</span><span class="status">${escapeHtml(booking.bookingStatus.replace('_', ' '))}</span></div>
               </div>
@@ -776,13 +776,13 @@ export default function AdminBookingsPage() {
                   <div>
                     <p className="text-forest-500 dark:text-mist-400">Check-in</p>
                     <p className="font-medium text-forest-800 dark:text-white">
-                      {formatDate(selectedBooking.checkIn)} at 2:00 PM
+                      {formatDate(selectedBooking.checkIn)} at 10:00 AM
                     </p>
                   </div>
                   <div>
                     <p className="text-forest-500 dark:text-mist-400">Check-out</p>
                     <p className="font-medium text-forest-800 dark:text-white">
-                      {formatDate(selectedBooking.checkOut)} at 11:00 AM
+                      {formatDate(selectedBooking.checkOut)} at 9:00 AM
                     </p>
                   </div>
                   <div>

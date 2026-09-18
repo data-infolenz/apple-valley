@@ -114,7 +114,7 @@ async function buildDashboardResponse() {
 
       if (checkIn >= todayStart && checkIn <= todayEnd) {
         activities.push({
-          time: '02:00 PM',
+          time: '10:00 AM',
           activity: 'Check-in',
           guest: (booking.guestSnapshot as { name?: string }).name || 'Guest',
           room,
@@ -123,7 +123,7 @@ async function buildDashboardResponse() {
 
       if (checkOut >= todayStart && checkOut <= todayEnd) {
         activities.push({
-          time: '11:00 AM',
+          time: '9:00 AM',
           activity: 'Check-out',
           guest: (booking.guestSnapshot as { name?: string }).name || 'Guest',
           room,

@@ -278,7 +278,7 @@ export const SEASONS_DATA = [
 export const TAX_RATE = 0.12; // 12% GST
 
 export const CHECK_IN_TIME = '10:00 AM';
-export const CHECK_OUT_TIME = '9:00 PM';
+export const CHECK_OUT_TIME = '9:00 AM';
 
 export const CANCELLATION_POLICY = {
   freeCancellationDays: 3,
@@ -290,7 +290,7 @@ export const WHATSAPP_MESSAGE_TEMPLATES = {
   bookingConfirmation: (bookingId: string, guestName: string) =>
     `Dear ${guestName}, your booking at Apple Valley is confirmed!\n\nBooking ID: ${bookingId}\n\nWe look forward to hosting you. For any queries, reply to this message.`,
   checkInReminder: (guestName: string, date: string) =>
-    `Dear ${guestName}, this is a reminder about your check-in at Apple Valley tomorrow (${date}). Check-in time is 2 PM. See you soon!`,
+    `Dear ${guestName}, this is a reminder about your check-in at Apple Valley tomorrow (${date}). Check-in time is 10:00 AM. See you soon!`,
   reviewRequest: (guestName: string) =>
     `Dear ${guestName}, thank you for staying with us at Apple Valley! We hope you had a wonderful time. Would you like to share your experience?`,
 };

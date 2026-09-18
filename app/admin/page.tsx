@@ -95,11 +95,11 @@ const recentBookings = [
 ];
 
 const todayActivities = [
-  { time: '09:00 AM', activity: 'Check-out', guest: 'Rohit Verma', room: '201' },
-  { time: '10:30 AM', activity: 'Check-in', guest: 'Priya Sharma', room: '302' },
-  { time: '12:00 PM', activity: 'Check-out', guest: 'Family Wilson', room: '105-106' },
-  { time: '02:00 PM', activity: 'Check-in', guest: 'Rahul Menon', room: '401' },
-  { time: '03:30 PM', activity: 'Check-in', guest: 'Anjali Krishnan', room: '501' },
+  { time: '9:00 AM', activity: 'Check-out', guest: 'Rohit Verma', room: '201' },
+  { time: '10:00 AM', activity: 'Check-in', guest: 'Priya Sharma', room: '302' },
+  { time: '9:00 AM', activity: 'Check-out', guest: 'Family Wilson', room: '105-106' },
+  { time: '10:00 AM', activity: 'Check-in', guest: 'Rahul Menon', room: '401' },
+  { time: '10:00 AM', activity: 'Check-in', guest: 'Anjali Krishnan', room: '501' },
 ];
 
 const fallbackTopPackages = [

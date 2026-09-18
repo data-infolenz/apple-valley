@@ -19,10 +19,12 @@ import Footer from '@/components/public/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import coupleMistyStayPackage from '@/components/public/src/img/Couple Misty Stay.jpg';
-import familyVacationPackage from '@/components/public/src/img/Family Vacation.jpg';
-import honeymoonPackage from '@/components/public/src/img/Honeymoon Package.jpg';
+import coupleMistyStayPackage from '@/public/src/Exclusive packages/Couple misty stay (1).png';
+import familyVacationPackage from '@/public/src/Exclusive packages/family vacation package (1).png';
+import honeymoonPackage from '@/public/src/Exclusive packages/honeymoon package (1).jpeg';
 import hotelPackageHero from '@/components/public/src/img/hotel package.jpg';
+import RoomSlideshow from '@/components/public/RoomSlideshow';
+import { packageImages } from '@/lib/package-images';
 import roomPicTwo from '@/components/public/src/img/room pic 2.jpg';
 import roomPicThree from '@/components/public/src/img/room pic 3.jpg';
 
@@ -46,7 +48,7 @@ const packages = [
       { name: 'Flower Decoration', description: 'Rose & orchid decoration in room on arrival' },
       { name: 'Campfire Evening', description: 'Private campfire session with snacks' },
       { name: 'Welcome Drink', description: 'Refreshing welcome drink on arrival' },
-      { name: 'Late Check-out', description: 'Extended check-out till 1 PM' },
+      { name: 'Check-out', description: 'Check-out at 9:00 AM' },
     ],
     mealPlan: 'Breakfast + 1 Dinner',
     hasTransport: false,
@@ -100,7 +102,7 @@ const packages = [
       { name: 'Evening Tea/Coffee', description: 'Complimentary evening beverages with snacks' },
       { name: 'Nature Walk Guide', description: 'Guided morning nature walk to viewpoints' },
       { name: '15% Discount on Add-ons', description: 'Special discount on all add-on services' },
-      { name: 'Early Check-in', description: 'Check-in from 12 PM subject to availability' },
+      { name: 'Check-in', description: 'Check-in from 10:00 AM' },
     ],
     mealPlan: 'Breakfast included',
     hasTransport: false,
@@ -127,9 +129,9 @@ const packages = [
       { name: 'Rose Bed Decoration', description: 'Rose petal decoration on bed on first night' },
       { name: 'Room Fresh Flowers', description: 'Daily fresh flower arrangement in room' },
       { name: 'Chocolate Hamper', description: 'Premium chocolates and dry fruits' },
-      { name: 'Private Campfire', description: 'Romantic campfire session just for two' },
+      // { name: 'Private Campfire', description: 'Romantic campfire session just for two' },
       { name: 'Lake View Dinner Setup', description: 'Special lakeside dining experience' },
-      { name: 'Late Check-out', description: 'Extended check-out till 2 PM' },
+      { name: 'Check-out', description: 'Check-out at 9:00 AM' },
     ],
     mealPlan: 'Breakfast + 2 Dinners',
     hasTransport: false,
@@ -226,13 +228,8 @@ export default function PackagesPage() {
                   <div className="grid grid-cols-1 lg:grid-cols-2">
                     {/* Image Side */}
                     <div className="relative h-64 lg:h-auto lg:min-h-[400px]">
-                      <Image
-                        src={pkg.image}
-                        alt={pkg.name}
-                        fill
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent lg:hidden" />
+                      <RoomSlideshow images={packageImages[pkg.id] ?? [pkg.image]} name={pkg.name} />
+                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent lg:hidden" />
                       <div className="absolute top-4 left-4 flex gap-2">
                         <Badge className="bg-green-600 text-white">
                           <Tag className="w-3 h-3 mr-1" />
@@ -352,12 +349,7 @@ export default function PackagesPage() {
                 <Card className="overflow-hidden hover:shadow-xl transition-shadow h-full">
                   <div className="grid grid-cols-1 sm:grid-cols-2">
                     <div className="relative h-40 sm:h-full">
-                      <Image
-                        src={pkg.image}
-                        alt={pkg.name}
-                        fill
-                        className="w-full h-full object-cover"
-                      />
+                      <RoomSlideshow images={packageImages[pkg.id] ?? [pkg.image]} name={pkg.name} />
                       <Badge className="absolute top-3 left-3 bg-green-600 text-white text-xs">
                         Save ₹{(pkg.originalPrice - pkg.price).toLocaleString()}
                       </Badge>

@@ -36,7 +36,7 @@ const whatsappNumber = '+919488401385';
 const faqs = [
   {
     question: 'What are the check-in and check-out times?',
-    answer: 'Check-in is at 10:00 Am and check-out is at 9:00 Pm. Early check-in and late check-out can be arranged based on availability with prior request.',
+    answer: 'Check-in is at 10:00 AM and check-out is at 9:00 AM. Early check-in and late check-out can be arranged based on availability with prior request.',
   },
   {
     question: 'Is parking available at the property?',
@@ -64,7 +64,7 @@ const faqs = [
   },
   {
     question: 'Can I request early check-in or late check-out?',
-    answer: 'Early check-in (from 12 PM) and late check-out (till 2 PM) are complimentary based on availability. Please request at the time of booking.',
+    answer: 'Early check-in and late check-out are complimentary based on availability. Please request at the time of booking.',
   },
 ];
 
@@ -206,7 +206,7 @@ export default function ContactPage() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-forest-600 dark:text-mist-400">Check-out</span>
-                        <span className="font-medium text-forest-800 dark:text-white">9:00 PM</span>
+                        <span className="font-medium text-forest-800 dark:text-white">9:00 AM</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-forest-600 dark:text-mist-400">Reception</span>

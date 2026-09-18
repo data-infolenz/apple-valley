@@ -7,8 +7,9 @@ import { motion } from 'framer-motion';
 import RoomSlideshow from '@/components/public/RoomSlideshow';
 import { roomImages } from '@/lib/room-images';
 import { getRoomAmenities } from '@/lib/room-amenities';
-import { ArrowRight, Star, MapPin, Clock, Shield, Heart, Coffee, Mountain, ChevronLeft, ChevronRight, Phone, ParkingSquareIcon, Stethoscope, Bed, Utensils } from 'lucide-react';
+import { ArrowRight, Star, MapPin, Clock, Shield, Heart, Coffee, Mountain, ChevronLeft, ChevronRight, Phone, ParkingSquareIcon, Stethoscope, Bed, Utensils, Tv, Wifi, Heater, GlassWater, Fence, Armchair, Refrigerator, Dices, Trophy } from 'lucide-react';
 import Header from '@/components/public/Header';
+import { testimonials } from '@/lib/testimonials';
 import BackgroundParticles from '@/components/public/BackgroundParticles';
 import Footer from '@/components/public/Footer';
 import { Button } from '@/components/ui/button';
@@ -34,9 +35,9 @@ import pineForest2 from '@/components/public/src/img/pine forest 2.jpg';
 import pineForest3 from '@/components/public/src/img/pine forest 3.jpg';
 import pineForest4 from '@/components/public/src/img/pine forest 4.jpg';
 import whyChooseImage from '@/public/why to choose img.png';
-import coupleMistyStayPackage from '@/components/public/src/img/Couple Misty Stay.jpg';
-import familyVacationPackage from '@/components/public/src/img/Family Vacation.jpg';
-import honeymoonPackage from '@/components/public/src/img/Honeymoon Package.jpg';
+import coupleMistyStayPackage from '@/public/src/Exclusive packages/Couple misty stay (1).png';
+import familyVacationPackage from '@/public/src/Exclusive packages/family vacation package (1).png';
+import honeymoonPackage from '@/public/src/Exclusive packages/honeymoon package (1).jpeg';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -243,6 +244,59 @@ export default function Home() {
     },
   ];
 
+  const roomAmenityCards = [
+    {
+      icon: Tv,
+      title: 'TV',
+      description: 'Unwind with in-room entertainment after a day exploring the hills.',
+    },
+    {
+      icon: Wifi,
+      title: 'WiFi',
+      description: 'Stay connected from the comfort of your room with WiFi access.',
+    },
+    {
+      icon: Heater,
+      title: 'Water Heater',
+      description: 'Enjoy a warm shower with a water heater available in every room.',
+    },
+    {
+      icon: GlassWater,
+      title: 'Water Dispenser',
+      description: 'A water dispenser in every room makes it easy to stay refreshed.',
+    },
+    {
+      icon: Fence,
+      title: 'Balcony View',
+      description: 'Take in the surroundings and enjoy a quiet moment from your balcony.',
+    },
+    {
+      icon: Armchair,
+      title: 'Sitting Area',
+      description: 'Settle into your room’s sitting area to relax and spend time together.',
+    },
+    {
+      icon: Refrigerator,
+      title: 'Refrigerator',
+      description: 'Keep drinks and snacks cool with a refrigerator in the Honeymoon Suite.',
+    },
+    {
+      icon: Coffee,
+      title: 'Coffee Maker',
+      description: 'Enjoy a fresh cup in your room with the Honeymoon Suite’s coffee maker.',
+    },
+    {
+      icon: Dices,
+      title: 'Indoor Games',
+      description: 'Enjoy chess, carrom, and playing cards with family and friends.',
+    },
+    {
+      icon: Trophy,
+      title: 'Outdoor Games',
+      description: 'Enjoy a game of badminton with family and friends outdoors.',
+    },
+  ];
+
   const attractions = [
     {
       name: 'Kodai Lake',
@@ -290,38 +344,7 @@ export default function Home() {
     },
   ];
 
-  const testimonials = [
-    {
-      name: 'Gajendra babu',
-      location: 'Chennai',
-      rating: 5,
-      text: 'We stayed in Hotel apple valley through happy holidays.Xcellent customer service,strong hospitality,good restaurant with humble service. Nice gardening serving food for birds and i can sparrows after a long time. Car parking also available. Worth for money. All together good hotel to stay in kodaikanal town',
-    },
-    {
-      name: 'Passion4vacations',
-      location: 'Bangalore',
-      rating: 4,
-      text: 'We really liked the ambience of the hotel...nice place to stay in kodaikanal with great hotel staff, good service. It has free Wifi, a water dispenser (so no electric kettle). Washrooms are in good condition. Well worth the price.',
-    },
-    {
-      name: 'Sankey',
-      location: 'malaysia',
-      rating: 5,
-      text: 'Apple Valley resort was really a class hotel, the hotel room were spacious, hotel interior was good. Even the hotel staff was friendly. Hotel is at the centre of the city Kodaikanal. The lake is just walking distance from the hotel.',
-    },
-    {
-      name: 'Floor v Kempen',
-      location: 'The Hague, The Netherlands',
-      rating: 4,
-      text: 'We had a perfect stay at the Apple Valley. The super deluxe room was nice and clean with a great view of the mountains. The bed was really comfortable and there is good wifi and a hot shower.The staff was extremely friendly and helpfull. They remembered my friends birthday and even decorated the room. We would definitely stay at this hotel again!.',
-    },
-    {
-      name: 'Rahul Gambhwa',
-      location: 'Delhi',
-      rating: 5,
-      text: 'We stayed here for 2 nights, hotel location is close to market. Rooms are bigger, comfortable and clean. If you are in group there is good sitting area. A person in front office Mr. Sam help us during check-in & check out very gently For dinner they took extra care the prepares excellent food at all time Mr. Nambhu working as F&B attendant is very polite and humble person always available in service.Overall we had wonderful experience.',
-    },
-  ];
+
 
   return (
     <div className="min-h-screen">
@@ -338,6 +361,7 @@ export default function Home() {
               alt="Apple Valley Kodaikanal resort"
               fill
               sizes="100vw"
+              loading={index === 0 ? 'eager' : 'lazy'}
               className={`object-cover transition-opacity duration-1000 ${
                 index === heroSlideIndex ? 'opacity-100' : 'opacity-0'
               }`}
@@ -347,20 +371,15 @@ export default function Home() {
 
         {/* Content */}
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:min-h-[calc(90vh-112px)] lg:flex lg:items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-3xl"
-          >
+          <div className="max-w-3xl">
             <Badge className="hero-eyebrow mb-4 bg-walnut-600/90 text-white border-0">
-              Premium Hill Station Resort
+             A Premium Escape Above the Clouds
             </Badge>
-            <h1 className="hero-title font-heading text-4xl sm:text-5xl lg:text-7xl font-medium text-forest-950 dark:text-white mb-6 leading-tight [text-shadow:0_2px_8px_rgb(0_0_0_/_60%)]">
+            <h1 className="hero-title font-heading text-4xl sm:text-5xl lg:text-7xl font-medium text-forest-950 dark:text-white mb-6 leading-tight">
               <span className="hero-line">Escape to the</span>
-              <span className="hero-line hero-line-delay">Misty Hills of <em className="text-walnut-700 dark:text-walnut-300">Kodaikanal</em></span>
+              <span className="hero-line hero-line-delay">Misty Hills of <em className="text-green-700 dark:text-green-700">Kodaikanal</em></span>
             </h1>
-            <p className="hero-description text-lg sm:text-xl text-forest-800 dark:text-white/90 mb-8 leading-relaxed [text-shadow:0_1px_4px_rgb(0_0_0_/_80%)]">
+            <p className="hero-description text-lg sm:text-xl text-white mb-8 leading-relaxed">
               Book your perfect stay with lake views, cozy rooms, and peaceful hill-station comfort.
             </p>
             <div className="hero-actions flex flex-wrap gap-4">
@@ -376,7 +395,7 @@ export default function Home() {
                 </Button>
               </Link>
             </div>
-          </motion.div>
+          </div>
 
         </div>
       </section>
@@ -469,7 +488,7 @@ export default function Home() {
       <section className="particle-scene rooms-neu-scene py-20">
         <BackgroundParticles />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -515,8 +534,9 @@ Apple Valley, a stay that lives in your heart forever.
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="rooms-neu-panel relative p-3 mb-6"
+              className="space-y-12"
             >
+              <div className="rooms-neu-panel relative p-3">
               <Image
                 src={whyChooseImage}
                 alt="Apple Valley"
@@ -534,6 +554,31 @@ Apple Valley, a stay that lives in your heart forever.
                 </div>
                 <p className="text-forest-800 dark:text-white font-semibold">4.5 Rating</p>
                 <p className="text-sm text-forest-600 dark:text-mist-400">500+ Reviews</p>
+              </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {roomAmenityCards.map((item, index) => (
+                  <motion.div
+                    key={item.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: (index % 2) * 0.1 }}
+                    className="rooms-neu-panel flex gap-3 p-5"
+                  >
+                    <div className="rooms-neu-chip w-11 h-11 rounded-xl flex items-center justify-center shrink-0">
+                      <item.icon className="w-6 h-6 text-forest-600 dark:text-forest-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-forest-800 dark:text-white mb-1">
+                        {item.title}
+                      </h4>
+                      <p className="text-sm text-forest-600 dark:text-mist-400">
+                        {item.description}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
             </motion.div>
           </div>
