@@ -127,6 +127,7 @@ function BookingContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
   const [confirmedBookingId, setConfirmedBookingId] = useState('');
+  const [emailStatus, setEmailStatus] = useState<'sent' | 'failed'>('failed');
   const [roomTypes, setRoomTypes] = useState<RoomTypeOption[]>(fallbackRoomTypes);
   const [documentFile, setDocumentFile] = useState<File | null>(null);
   const [districtOptions, setDistrictOptions] = useState<string[]>([]);
@@ -345,9 +346,10 @@ function BookingContent() {
       }
 
       setConfirmedBookingId(result.data.bookingId);
+      setEmailStatus(result.emailStatus === 'sent' ? 'sent' : 'failed');
       setBookingConfirmed(true);
       setCurrentStep(5);
-      toast.success('Booking confirmed successfully!');
+      toast.success('Booking received successfully!');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Unable to create booking');
     } finally {
@@ -626,7 +628,12 @@ function BookingContent() {
                   {currentStep === 5 && bookingConfirmed && (
                     <motion.div key="step5" initial={false} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
                       <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center"><CheckCircle2 className="w-10 h-10 text-green-600" /></div>
-                      <h2 className="font-heading text-3xl font-bold mb-2">Booking Confirmed!</h2>
+                      <h2 className="font-heading text-3xl font-bold mb-2">Booking Received!</h2>
+                      <p className="text-sm">Your reservation is pending confirmation by the hotel.</p>
+                      <p className="text-sm mt-3" role="status">{emailStatus === 'sent'
+                        ? `A booking receipt has been sent to ${bookingData.guestEmail}. Please check your inbox and spam folder.`
+                        : 'Your booking is saved, but we could not send the email receipt. Keep your booking ID and contact the hotel if you need help.'}</p>
+                      <Link href="/customer/login" className="inline-block mt-4 text-forest-600 underline">Sign in or sign up to view your bookings</Link>
                       <Card className="max-w-md mx-auto bg-forest-50 dark:bg-forest-900/50 mt-6">
                         <CardContent className="p-6">
                           <p className="text-sm text-forest-600 mb-1">Booking ID</p>

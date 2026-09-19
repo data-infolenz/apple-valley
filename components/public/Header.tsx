@@ -115,13 +115,19 @@ export default function Header() {
             </div>
 
             {/* Right Side */}
-            <div className="flex items-center gap-3">
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
               {/* Book Now Button */}
               <Link href="/booking">
                 <Button className="hidden sm:flex bg-walnut-600 hover:bg-walnut-700 text-white">
                   Book Now
                 </Button>
               </Link>
+
+              <Button asChild variant="outline" className="border-forest-300 bg-transparent px-3 text-forest-800 hover:bg-forest-50 dark:border-white/40 dark:text-white dark:hover:bg-white/10">
+                <Link href="/customer/login" onClick={selectNavigation}>
+                  Sign In / Sign Up
+                </Link>
+              </Button>
 
               {/* Mobile Menu Button */}
               <button
@@ -171,6 +177,7 @@ export default function Header() {
                 </div>
 
                 <nav className="space-y-1">
+                  <Link href="/customer/login" onClick={selectNavigation} className="block px-4 py-3 rounded-lg text-base font-medium text-forest-600 dark:text-mist-300">Customer Sign In / Sign Up</Link>
                   {navigation.map((item) => (
                     <Link
                       key={item.name}

@@ -2,22 +2,27 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { signCustomerToken } from '@/lib/auth';
+import { getClientIp, isRateLimited } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
+    if (isRateLimited(`customer-register:${getClientIp(request.headers)}`)) {
+      return NextResponse.json({ success: false, error: 'Too many sign-up attempts. Try again later.' }, { status: 429 });
+    }
     const body = await request.json();
-    const email = String(body.email || '').toLowerCase();
+    const email = String(body.email || '').trim().toLowerCase();
+    const name = typeof body.name === 'string' ? body.name.trim() : '';
 
-    if (!body.name || !email || !body.password || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!name || name.length > 100 || !email || typeof body.password !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json(
         { success: false, error: 'Name, valid email, and password are required' },
         { status: 400 }
       );
     }
 
-    if (String(body.password).length < 8) {
+    if (body.password.length < 8 || Buffer.byteLength(body.password, 'utf8') > 72) {
       return NextResponse.json(
-        { success: false, error: 'Password must be at least 8 characters' },
+        { success: false, error: 'Password must be at least 8 characters and no more than 72 bytes' },
         { status: 400 }
       );
     }
@@ -25,8 +30,8 @@ export async function POST(request: NextRequest) {
     const customer = await prisma.customer.create({
       data: {
         email,
-        name: body.name,
-        phone: body.phone,
+        name,
+        phone: typeof body.phone === 'string' ? body.phone.trim().slice(0, 30) : undefined,
         password: await bcrypt.hash(body.password, 12),
       },
     });
@@ -51,6 +56,9 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
+      return NextResponse.json({ success: false, error: 'An account already exists with this email. Please sign in.' }, { status: 409 });
+    }
     console.error('Customer register error:', error);
     return NextResponse.json(
       { success: false, error: 'Unable to create customer account' },

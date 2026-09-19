@@ -196,6 +196,11 @@ export default function AdminBookingsPage() {
         window.open(result.whatsappUrl, '_blank', 'noopener,noreferrer');
       }
       toast.success(`Booking ${bookingId} status updated to ${newStatus.replace('_', ' ')}`);
+      if (result.emailStatus === 'sent') {
+        toast.success('Booking confirmation email sent to the customer.');
+      } else if (result.emailStatus === 'failed') {
+        toast.warning('Booking approved, but the confirmation email could not be sent. Please contact the customer.');
+      }
       return result.data as Booking;
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Unable to update booking');

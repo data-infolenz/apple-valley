@@ -32,6 +32,10 @@ export default function CustomerDashboardPage() {
     const loadBookings = async () => {
       try {
         const response = await fetch('/api/customer/bookings', { cache: 'no-store' });
+        if (response.status === 401) {
+          router.replace('/customer/login');
+          return;
+        }
         const result = await response.json();
 
         if (!response.ok || !result.success) {
@@ -47,7 +51,7 @@ export default function CustomerDashboardPage() {
     };
 
     loadBookings();
-  }, []);
+  }, [router]);
 
   const logout = async () => {
     await fetch('/api/customer/logout', { method: 'POST' });

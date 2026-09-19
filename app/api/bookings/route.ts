@@ -5,6 +5,7 @@ import { buildWhatsAppConfirmationUrl, getRoomAvailability } from '@/lib/booking
 import { decodeJsonField, encodeJsonField } from '@/lib/json-fields';
 import { mkdir, writeFile } from 'fs/promises';
 import path from 'path';
+import { sendBookingReceipt } from '@/lib/booking-email';
 
 type BookingAddOnInput = {
   name?: string;
@@ -376,13 +377,14 @@ export async function POST(request: NextRequest) {
     const checkOutDate = new Date(checkOut);
     const nights = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24));
 
-    if (nights < 1) {
+    if (!Number.isFinite(nights) || nights < 1) {
       return NextResponse.json(
         { success: false, error: 'Invalid date range' },
         { status: 400 }
       );
     }
 
+    guest.email = typeof guest.email === 'string' ? guest.email.trim().toLowerCase() : '';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guest.email)) {
       return NextResponse.json(
         { success: false, error: 'A valid email address is required' },
@@ -391,9 +393,11 @@ export async function POST(request: NextRequest) {
     }
 
     const booking = await createLocalBookingFromBody(body, uploadedFile);
+    const emailStatus = await sendBookingReceipt(booking);
     return NextResponse.json({
       success: true,
       data: booking,
+      emailStatus,
       message: 'Booking created successfully',
     });
   } catch (error) {
@@ -456,8 +460,13 @@ export async function PATCH(request: NextRequest) {
     }
 
     const previousBooking = await prisma.booking.findUnique({ where: { bookingId } });
+    if (!previousBooking) {
+      return NextResponse.json({ success: false, error: 'Booking not found' }, { status: 404 });
+    }
+    const newlyConfirmed = bookingStatus === 'confirmed' && previousBooking.bookingStatus !== 'confirmed';
     const booking = await prisma.booking.update({
-      where: { bookingId },
+      // Only one approval can win if two admins act on the same booking at once.
+      where: { bookingId, bookingStatus: previousBooking.bookingStatus },
       data: {
         ...update,
         confirmedAt: update.confirmedAt ? new Date(update.confirmedAt as string) : undefined,
@@ -465,19 +474,25 @@ export async function PATCH(request: NextRequest) {
         checkedOutAt: update.checkedOutAt ? new Date(update.checkedOutAt as string) : undefined,
         cancelledAt: update.cancelledAt ? new Date(update.cancelledAt as string) : undefined,
       },
-    }).catch(() => null);
+    }).catch((error: unknown) => {
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'P2025') return null;
+      throw error;
+    });
 
     if (!booking) {
       return NextResponse.json(
-        { success: false, error: 'Booking not found' },
-        { status: 404 }
+        { success: false, error: 'Booking changed. Refresh and try again.' },
+        { status: 409 }
       );
     }
+
+    const emailStatus = newlyConfirmed ? await sendBookingReceipt(booking) : null;
 
     return NextResponse.json({
       success: true,
       data: serializeBooking(booking),
-      whatsappUrl: bookingStatus === 'confirmed' && previousBooking?.bookingStatus !== 'confirmed'
+      emailStatus,
+      whatsappUrl: newlyConfirmed
         ? buildWhatsAppConfirmationUrl(booking)
         : null,
       message: 'Booking updated successfully',
